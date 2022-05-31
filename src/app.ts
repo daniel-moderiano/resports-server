@@ -6,4 +6,4 @@ app.get('/', (req: Request, res: Response, next: NextFunction) => {
   res.send('Hello')
 });
 
-app.listen(5000, () => console.log('Server running'))
+export default app;
