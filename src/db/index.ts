@@ -14,6 +14,13 @@ const pool = new Pool({
   port: process.env.DB_PORT
 });
 
+const connect = async () => {
+  const connected = await pool.connect();
+
+  console.log('Connected');
+
+}
+
 // Use this query property in other files by importing this file as 'db', then performing something like the following:
 // await db.query('SELECT * FROM users WHERE id = $1', [12])
 export default {
