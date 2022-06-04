@@ -7,9 +7,18 @@ app.get('/', (req: Request, res: Response, next: NextFunction) => {
   res.send('Hello')
 });
 
-pool.query("DELETE FROM users WHERE id = 1", (err, res) => {
-  console.log(err, res);
-  pool.end();
-});
+// Callback
+pool.query('SELECT NOW() as now', (err, res) => {
+  if (err) {
+    console.log(err.stack)
+  } else {
+    console.log(res.rows[0])
+  }
+})
+// promise
+pool
+  .query('SELECT NOW() as now')
+  .then(res => console.log(res.rows[0]))
+  .catch(e => console.error(e.stack))
 
 export default app;
