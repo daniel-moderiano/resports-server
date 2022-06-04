@@ -7,11 +7,11 @@ app.get('/', (req: Request, res: Response, next: NextFunction) => {
   res.send('Hello')
 });
 
-// async/await
+// Example db query
 (async () => {
   try {
-    const { rows } = await db.query('SELECT NOW() as now')
-    console.log(rows[0])
+    const res = await db.query("SELECT * FROM users")
+    console.log(res.fields)
   } catch (err) {
     console.log(err)
   }
