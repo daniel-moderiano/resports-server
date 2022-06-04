@@ -1,5 +1,5 @@
 import express, { Application, Request, Response, NextFunction } from 'express';
-import pool from './config/db';
+import db from './db';
 
 const app: Application = express();
 
@@ -7,18 +7,14 @@ app.get('/', (req: Request, res: Response, next: NextFunction) => {
   res.send('Hello')
 });
 
-// Callback
-pool.query('SELECT NOW() as now', (err, res) => {
-  if (err) {
-    console.log(err.stack)
-  } else {
-    console.log(res.rows[0])
+// async/await
+(async () => {
+  try {
+    const { rows } = await db.query('SELECT NOW() as now')
+    console.log(rows[0])
+  } catch (err) {
+    console.log(err)
   }
-})
-// promise
-pool
-  .query('SELECT NOW() as now')
-  .then(res => console.log(res.rows[0]))
-  .catch(e => console.error(e.stack))
+})();
 
 export default app;
