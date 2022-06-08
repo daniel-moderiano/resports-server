@@ -9,14 +9,14 @@ app.get('/', (req: Request, res: Response, next: NextFunction) => {
   res.send('Hello')
 });
 
-(async () => {
-  try {
-    await getDb().connect();
-    console.log('DB connected')
-  } catch (err) {
-    console.log(err)
-  }
-})();
+// (async () => {
+//   try {
+//     await getDb().connect();
+//     console.log('DB connected')
+//   } catch (err) {
+//     console.log(err)
+//   }
+// })();
 
 // ! Call pool.end() on application shutdown. There is no need ot close individual clients when using a pool.
 

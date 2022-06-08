@@ -14,7 +14,7 @@ declare global {
       TEST_DB_NAME: string;
       TEST_DB_PASSWORD: string;
       TEST_ENV: string;
-      UNHAPPY: string;
+      TEST_ERROR: string;
       NODE_ENV: 'development' | 'production';
       PORT: number
     }

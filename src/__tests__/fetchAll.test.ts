@@ -1,7 +1,6 @@
 import { createTable, insert, dropTable } from "../db/utils"
 import { fetchAllItems, fetchItemNames } from '../db/items-service'
-
-process.env.TEST_ENV = 'true';
+import './dbSetupTeardown';
 
 describe('Item Service', () => {
   beforeAll(async () => {
@@ -14,7 +13,7 @@ describe('Item Service', () => {
 
   // this resets our environment variable so the next test doesn't fail due to bad db connection
   afterEach(() => {
-    process.env.UNHAPPY = 'false';
+    process.env.TEST_ERROR = 'false';
   })
 
   afterAll(async () => {
@@ -32,7 +31,7 @@ describe('Item Service', () => {
 
     // this tests the error path
     it('should catch error if database is down', async () => {
-      process.env.UNHAPPY = 'true';
+      process.env.TEST_ERROR = 'true';
       let isError = false;
 
       // Custom try/catch that ensures the presence of an error is tested. I am unable to test with the typical .toThrow() functionality, hence the unusual pattern here
@@ -58,7 +57,7 @@ describe('Item Service', () => {
 
     // this tests the error path
     it('should catch error if database is down', async () => {
-      process.env.UNHAPPY = 'true';
+      process.env.TEST_ERROR = 'true';
 
       let isError = false;
       try {
