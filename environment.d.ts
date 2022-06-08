@@ -9,6 +9,7 @@ declare global {
       DB_NAME: string;
       DB_TEST_NAME: string;
       DB_PASSWORD: string;
+      TEST_ENV: string;
       UNHAPPY: string;
       NODE_ENV: 'development' | 'production';
       PORT: number

@@ -8,3 +8,12 @@ export const fetchAllItems = async function () {
     throw err
   }
 }
+
+export const fetchItemNames = async function () {
+  try {
+    const items = await select('items')
+    return items.rows.map(({ name }) => name.toUpperCase())
+  } catch (err) {
+    throw err
+  }
+}

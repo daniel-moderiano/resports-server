@@ -1,5 +1,5 @@
 import { createTable, insert, dropTable } from "../db/utils"
-import { fetchAllItems } from '../db/fetchAll'
+import { fetchAllItems, fetchItemNames } from '../db/items-service'
 
 describe('Item Service', () => {
   beforeAll(async () => {
@@ -38,6 +38,30 @@ describe('Item Service', () => {
         await fetchAllItems();
       } catch (error) {
         // This line will only be called if there is an 
+        isError = true
+      } finally {
+        expect(isError).toBe(true)
+      }
+    })
+  })
+
+  describe('fetchAllItems', () => {
+    it('should return item names in upper case from items table', async () => {
+      const items = await fetchItemNames()
+      expect(items).toEqual([
+        'STEERING WHEEL',
+        'WINDSHIELD WIPER'
+      ])
+    })
+
+    // this tests the error path
+    it('should catch error if database is down', async () => {
+      process.env.UNHAPPY = 'true';
+
+      let isError = false;
+      try {
+        await fetchAllItems();
+      } catch (error) {
         isError = true
       } finally {
         expect(isError).toBe(true)
