@@ -1,6 +1,8 @@
 import { createTable, insert, dropTable } from "../db/utils"
 import { fetchAllItems, fetchItemNames } from '../db/items-service'
 
+process.env.TEST_ENV = 'true';
+
 describe('Item Service', () => {
   beforeAll(async () => {
     // here we're doing some table setup stuff so that we can perform assertions later

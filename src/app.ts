@@ -11,8 +11,7 @@ app.get('/', (req: Request, res: Response, next: NextFunction) => {
 
 (async () => {
   try {
-    console.log(getDb());
-    // await db.connect();
+    await getDb().connect();
     console.log('DB connected')
   } catch (err) {
     console.log(err)

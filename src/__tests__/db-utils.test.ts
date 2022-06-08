@@ -1,5 +1,8 @@
 import { createTable, insert, select, dropTable } from "../db/utils";
 
+// ! Ensure test DB is used
+process.env.TEST_ENV = 'true';
+
 afterAll(async () => {
   await dropTable('items');
 })

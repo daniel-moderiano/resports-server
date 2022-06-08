@@ -1,4 +1,4 @@
-// ! This line is required to avoid a known issue with ts-node that does not recognise manual .env types
+// * This line is required to avoid a known issue with ts-node that does not recognise manual .env types
 /// <reference path="../../environment.d.ts" />
 
 import 'dotenv/config'
@@ -7,12 +7,21 @@ import { Pool } from 'pg';
 // Define the db connection pools. These will be used to run queries
 
 // Used purely for testing purposes
-// ! To ensure the test pool is used for queries, manually set the process.env.TEST_ENV to 'true' in test setup
+// * To ensure the test pool is used for queries, manually set the process.env.TEST_ENV to 'true' in test setup
+// * Please enter the personalised details for your test db that is SEPARATE to your production db
+// const testPool = new Pool({
+//   database: 'something that will throw bad connection',
+//   password: 'this will result in unhappy path',
+//   port: 3211
+// });
+
 const testPool = new Pool({
-  database: 'something that will throw bad connection',
-  password: 'this will result in unhappy path',
-  port: 3211
-});
+  user: process.env.TEST_DB_USER,
+  host: process.env.TEST_DB_HOST,
+  database: process.env.TEST_DB_NAME,
+  password: process.env.TEST_DB_PASSWORD,
+  port: process.env.TEST_DB_PORT
+})
 
 // Used in development/production.
 // This uses a chosen DB with the parameters below. In this case, while running locally, the 'resports' db will be used under a sysadmin superuser
