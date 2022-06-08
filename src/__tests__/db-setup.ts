@@ -4,12 +4,11 @@
 import 'dotenv/config'
 import { Pool } from 'pg';
 
-// Define the db connection pool. This will be used to run queries
-// This uses a chosen DB with the parameters below. In this case, while running locally, the 'resports' db will be used under a sysadmin superuser
+// Define the db connection pool. This will be used to run test queries
 const db = new Pool({
-  user: process.env.DB_USER,
+  user: process.env.DB_NAME,
   host: process.env.DB_HOST,
-  database: process.env.DB_NAME,
+  database: process.env.DB_TEST_NAME,
   password: process.env.DB_PASSWORD,
   port: process.env.DB_PORT
 });
