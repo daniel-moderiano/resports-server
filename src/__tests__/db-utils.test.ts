@@ -1,4 +1,8 @@
-import { createTable, insert, select } from "../db/utils";
+import { createTable, insert, select, dropTable } from "../db/utils";
+
+afterAll(async () => {
+  await dropTable('items');
+})
 
 describe('database utils', () => {
   describe('createTable', () => {
@@ -19,7 +23,8 @@ describe('database utils', () => {
   describe('select', () => {
     it('should select items from the table', async () => {
       const res = await select('items')
-      expect(res.rows[1]).toStrictEqual({ id: 2, name: 'steering wheel', price: '62.59' })
+      // After each db test run, the 'items' table will be dropped, so we can be sure there is only one row in the table - the row inserted in the insert test
+      expect(res.rows[0]).toStrictEqual({ id: 1, name: 'steering wheel', price: '62.59' })
     })
   })
 })

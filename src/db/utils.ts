@@ -19,3 +19,9 @@ export const select = async function (tableName: string) {
 
   return db.query(`SELECT * FROM ${tableName}`)
 }
+
+export const dropTable = async function (tableName: string) {
+  await db.connect();
+
+  await db.query(`DROP TABLE IF EXISTS ${tableName};`);
+}

@@ -17,4 +17,6 @@ app.get('/', (req: Request, res: Response, next: NextFunction) => {
   }
 })();
 
+// ! Call pool.end() on application shutdown. There is no need ot close individual clients when using a pool.
+
 export default app;
