@@ -1,5 +1,7 @@
 import express, { Application, Request, Response, NextFunction } from 'express';
-import db from './db';
+import getDb from './db/index'
+
+process.env.TEST_ENV = 'false';
 
 const app: Application = express();
 
@@ -7,14 +9,15 @@ app.get('/', (req: Request, res: Response, next: NextFunction) => {
   res.send('Hello')
 });
 
-// Example db query
-(async () => {
-  try {
-    const res = await db.query("SELECT * FROM users")
-    console.log(res.fields)
-  } catch (err) {
-    console.log(err)
-  }
-})();
+// (async () => {
+//   try {
+//     await getDb().connect();
+//     console.log('DB connected')
+//   } catch (err) {
+//     console.log(err)
+//   }
+// })();
+
+// ! Call pool.end() on application shutdown. There is no need ot close individual clients when using a pool.
 
 export default app;
