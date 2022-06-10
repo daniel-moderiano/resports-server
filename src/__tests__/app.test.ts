@@ -17,6 +17,27 @@ describe('Routes', () => {
         .expect('User route')
         .expect(200, done)
     });
+
+    it("Login route correctly configured", done => {
+      request(app)
+        .post('/api/users/login')
+        .expect('Login route')
+        .expect(200, done)
+    });
+
+    it("Register route correctly configured", done => {
+      request(app)
+        .post('/api/users/register')
+        .expect('Register route')
+        .expect(200, done)
+    });
+
+    it("Logout route correctly configured", done => {
+      request(app)
+        .post('/api/users/logout')
+        .expect('Logout route')
+        .expect(200, done)
+    });
   });
 
   describe('Channel routes', () => {
