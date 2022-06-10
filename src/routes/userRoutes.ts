@@ -4,7 +4,7 @@ const router = express.Router();
 // Base path /api/users
 
 router.get('/', (req, res) => {
-  res.send('Welcome to the users route')
+  res.send('User route')
 });
 
 // router.post('/login', loginUser);
