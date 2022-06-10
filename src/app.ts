@@ -1,5 +1,7 @@
 import express, { Application, Request, Response, NextFunction } from 'express';
-import userRoutes from './routes/userRoutes'
+import userRoutes from './routes/userRoutes';
+import channelRoutes from './routes/channelRoutes';
+import subscriptionRoutes from './routes/subscriptionRoutes';
 
 process.env.TEST_ENV = 'false';
 
@@ -13,8 +15,8 @@ app.get('/', (req: Request, res: Response, next: NextFunction) => {
 
 // Use routes
 app.use('/api/users', userRoutes);
-// app.use('/api/channels', userRoutes);
-// app.use('/api/subscriptions', friendRoutes);
+app.use('/api/channels', channelRoutes);
+app.use('/api/subscriptions', subscriptionRoutes);
 
 
 // // define a secure route handler for the login page that redirects to /guitars

@@ -18,6 +18,24 @@ describe('Routes', () => {
         .expect(200, done)
     });
   });
+
+  describe('Channel routes', () => {
+    it("User route correctly configured", done => {
+      request(app)
+        .get('/api/channels/')
+        .expect('Channel route')
+        .expect(200, done)
+    });
+  });
+
+  describe('Subscription routes', () => {
+    it("User route correctly configured", done => {
+      request(app)
+        .get('/api/subscriptions/')
+        .expect('Subscription route')
+        .expect(200, done)
+    });
+  });
 });
 
 // // #Format #2
