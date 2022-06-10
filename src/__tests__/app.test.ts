@@ -25,16 +25,9 @@ describe('Routes', () => {
         .expect(200, done)
     });
 
-    it("Register route correctly configured", done => {
-      request(app)
-        .post('/api/users/register')
-        .expect('Register route')
-        .expect(200, done)
-    });
-
     it("Logout route correctly configured", done => {
       request(app)
-        .post('/api/users/logout')
+        .get('/api/users/logout')
         .expect('Logout route')
         .expect(200, done)
     });

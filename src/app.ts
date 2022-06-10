@@ -28,15 +28,12 @@ app.use(auth(config));
   console.log('Postgres connected');
 })();
 
-// Simple index route for testing
-// app.get('/', (req: Request, res: Response, next: NextFunction) => {
-//   res.send('Hello')
-// });
-
 // req.isAuthenticated is provided from the auth router
-app.get('/', (req: Express.Request, res) => {
-  console.log(req.oidc.user);
-  if (req.oidc.isAuthenticated()) {
+app.get('/', (req, res) => {
+  if (req.oidc.isAuthenticated() && req.oidc.user) {
+    console.log(req.oidc.user);
+    console.log(`User ID: ${req.oidc.user.sub.split('|')[1]}`);
+
     res.send('Logged in')
   } else {
     res.send('Unauthorised, please log in')
