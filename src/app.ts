@@ -2,13 +2,36 @@ import express, { Application, Request, Response, NextFunction } from 'express';
 import userRoutes from './routes/userRoutes';
 import channelRoutes from './routes/channelRoutes';
 import subscriptionRoutes from './routes/subscriptionRoutes';
+import getDb from './db/index';
+import * as sessionAuth from './middleware/sessionAuth';
+import oidc from './config/oidc';
+
+import session from "express-session";
 
 process.env.TEST_ENV = 'false';
 
 const app: Application = express();
+// Configure Express to use authentication sessions
+app.use(session({
+  resave: true,
+  saveUninitialized: false,
+  secret: process.env.SESSION_SECRET
+}));
 
-// const oidc = app.locals.oidc;
+// Configure Express to use the OIDC client router
+app.use(oidc.router);
 
+// console.log(oidc);
+
+
+(async () => {
+  const db = getDb();
+  await db.connect();
+  console.log('Postgres connected');
+})();
+
+
+// Simple index route for testing
 app.get('/', (req: Request, res: Response, next: NextFunction) => {
   res.send('Hello')
 });
@@ -17,22 +40,5 @@ app.get('/', (req: Request, res: Response, next: NextFunction) => {
 app.use('/api/users', userRoutes);
 app.use('/api/channels', channelRoutes);
 app.use('/api/subscriptions', subscriptionRoutes);
-
-
-// // define a secure route handler for the login page that redirects to /guitars
-// app.get("/login", oidc.ensureAuthenticated(), (req, res) => {
-//   res.redirect("/guitars");
-// });
-
-// // define a route to handle logout
-// app.get("/logout", (req: any, res) => {
-//   req.logout();
-//   res.redirect("/");
-// });
-
-// // define a secure route handler for the guitars page
-// app.get("/guitars", oidc.ensureAuthenticated(), (req: any, res) => {
-//   res.render("guitars");
-// });
 
 export default app;

@@ -15,6 +15,11 @@ declare global {
       TEST_DB_PASSWORD: string;
       TEST_ENV: string;
       TEST_ERROR: string;
+      SESSION_SECRET: string;
+      OKTA_ORG_URL: string;
+      OKTA_CLIENT_ID: string;
+      OKTA_CLIENT_SECRET: string;
+      HOST_URL: string;
       NODE_ENV: 'development' | 'production';
       PORT: number
     }
