@@ -35,8 +35,12 @@ app.use(auth(config));
 
 // req.isAuthenticated is provided from the auth router
 app.get('/', (req: Express.Request, res) => {
-  console.log(req.oidc.isAuthenticated());
-  res.send('Hello')
+  console.log(req.oidc.user);
+  if (req.oidc.isAuthenticated()) {
+    res.send('Logged in')
+  } else {
+    res.send('Unauthorised, please log in')
+  }
 });
 
 // Use routes
