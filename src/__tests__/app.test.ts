@@ -20,8 +20,8 @@ describe('Routes', () => {
 
     it("Login route correctly configured", done => {
       request(app)
-        .post('/api/users/login')
-        .expect('Login route')
+        .get('/api/users/login')
+        .expect('Protected login route')
         .expect(200, done)
     });
 

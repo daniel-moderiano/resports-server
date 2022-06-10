@@ -1,17 +1,14 @@
 import express from 'express';
-import oidc from '../config/oidc';
 const router = express.Router();
 
 // Base path /api/users
 
 router.get('/', (req, res) => {
-  console.log(oidc);
-
   res.send('User route')
 });
 
-router.post('/login', oidc.ensureAuthenticated(), (req, res) => {
-  res.send('Login route')
+router.get('/login', (req, res) => {
+  res.send('Protected login route')
 });
 router.post('/logout', (req, res) => {
   res.send('Logout route')
