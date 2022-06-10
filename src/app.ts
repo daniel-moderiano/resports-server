@@ -1,5 +1,5 @@
 import express, { Application, Request, Response, NextFunction } from 'express';
-import getDb from './db/index'
+import userRoutes from './routes/userRoutes'
 
 process.env.TEST_ENV = 'false';
 
@@ -10,6 +10,12 @@ const oidc = app.locals.oidc;
 app.get('/', (req: Request, res: Response, next: NextFunction) => {
   res.send('Hello')
 });
+
+// Use routes
+// app.use('/api/users', postRoutes);
+app.use('/api/channels', userRoutes);
+// app.use('/api/subscriptions', friendRoutes);
+
 
 // define a secure route handler for the login page that redirects to /guitars
 app.get("/login", oidc.ensureAuthenticated(), (req, res) => {
