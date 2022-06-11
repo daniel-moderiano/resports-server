@@ -6,7 +6,6 @@ import 'dotenv/config';
 import { config } from './config/auth0';
 import { auth } from 'express-openid-connect';
 import { errorHandler } from './middleware/errorMiddleware';
-import asyncHandler from 'express-async-handler';
 
 process.env.TEST_ENV = 'false';
 
