@@ -21,16 +21,16 @@ export const init = async () => {
     !process.env.TEST_ENV && console.log("creating users table...");
     await db.query(`
       CREATE TABLE users (
-        user_id TEXT PRIMARY KEY NOT NULL,
+        user_id TEXT PRIMARY KEY,
         user_email TEXT NOT NULL UNIQUE
       );
     `);
 
-    // Consider additional information e.g. channel logo_url, description, etc.
+    // Consider additional information e.g. channel logo_url, description, etc. Channel ID provided by YT/Twitch APIs
     !process.env.TEST_ENV && console.log("creating channels table...");
     await db.query(`
       CREATE TABLE channels (
-        channel_id serial PRIMARY KEY,
+        channel_id TEXT PRIMARY KEY,
         channel_name TEXT
       );
     `);
@@ -41,7 +41,7 @@ export const init = async () => {
       CREATE TABLE subscriptions (
         subscription_id serial PRIMARY KEY,
         user_id TEXT REFERENCES users(user_id),
-        channel_id INT REFERENCES channels(channel_id)
+        channel_id TEXT REFERENCES channels(channel_id)
       );
     `);
 
