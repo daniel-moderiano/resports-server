@@ -37,4 +37,7 @@ app.get('/', (req, res) => {
 app.use('/api/channels', channelRoutes);
 app.use('/api/subscriptions', subscriptionRoutes);
 
+// Use error handler AFTER all routes are defined above
+app.use(errorHandler);
+
 export default app;
