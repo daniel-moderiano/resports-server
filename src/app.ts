@@ -1,23 +1,48 @@
 import express, { Application, Request, Response, NextFunction } from 'express';
-import getDb from './db/index'
+import userRoutes from './routes/userRoutes';
+import channelRoutes from './routes/channelRoutes';
+import subscriptionRoutes from './routes/subscriptionRoutes';
+import getDb from './db/index';
+import 'dotenv/config';
+import { auth } from 'express-openid-connect';
 
 process.env.TEST_ENV = 'false';
 
 const app: Application = express();
 
-app.get('/', (req: Request, res: Response, next: NextFunction) => {
-  res.send('Hello')
+const config = {
+  authRequired: false,
+  auth0Logout: true,
+  secret: process.env.AUTH_SECRET,
+  baseURL: process.env.BASE_URL,
+  clientID: process.env.CLIENT_ID,
+  issuerBaseURL: process.env.ISSUER
+};
+
+// auth router attaches /login, /logout, and /callback routes to the baseURL
+app.use(auth(config));
+
+(async () => {
+  const db = getDb();
+  await db.connect();
+  console.log('Postgres connected');
+})();
+
+// req.isAuthenticated is provided from the auth router
+app.get('/', (req, res) => {
+  if (req.oidc.isAuthenticated() && req.oidc.user) {
+    console.log(req.oidc.user);
+    console.log(`User ID: ${req.oidc.user.sub.split('|')[1]}`);
+
+    res.send('Logged in')
+  } else {
+    res.send('Unauthorised, please log in')
+  }
 });
 
-// (async () => {
-//   try {
-//     await getDb().connect();
-//     console.log('DB connected')
-//   } catch (err) {
-//     console.log(err)
-//   }
-// })();
-
-// ! Call pool.end() on application shutdown. There is no need ot close individual clients when using a pool.
+// Use routes
+// app.use('/api/users', userRoutes);
+app.use('/api/channels', channelRoutes);
+app.use('/api/subscriptions', subscriptionRoutes);
 
 export default app;
