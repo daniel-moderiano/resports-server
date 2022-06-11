@@ -1,10 +1,12 @@
-import express, { Application } from 'express';
+import express, { Application, Request } from 'express';
 import channelRoutes from './routes/channelRoutes';
 import subscriptionRoutes from './routes/subscriptionRoutes';
 import getDb from './db/index';
 import 'dotenv/config';
 import { config } from './config/auth0';
 import { auth } from 'express-openid-connect';
+import { errorHandler } from './middleware/errorMiddleware';
+import asyncHandler from 'express-async-handler';
 
 process.env.TEST_ENV = 'false';
 
