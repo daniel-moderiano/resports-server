@@ -10,6 +10,12 @@ interface Channel {
   channelName: string;
 }
 
+interface Subscription {
+  subscriptionId: number;
+  channelId: string;
+  userId: string;
+}
+
 // GENERALISED FUNCTIONS
 export const selectAllFromTable = async function (tableName: string) {
   const db = getDb();
@@ -67,3 +73,30 @@ export const updateChannel = async (updatedChannel: Channel) => {
 
 
 // SUBSCRIPTIONS TABLE FUNCTIONS
+export const selectSubscription = async (subscriptionId: number) => {
+  const db = getDb();
+  return db.query('SELECT * FROM subscriptions WHERE subscription_id=$1', [subscriptionId])
+}
+
+export const insertSubscription = async (subscription: Subscription) => {
+  const db = getDb();
+  return db.query('INSERT INTO subscriptions (subscription_id, user_id, channel_id) VALUES ($1, $2, $3) RETURNING *', [
+    subscription.subscriptionId,
+    subscription.userId,
+    subscription.channelId
+  ])
+}
+
+export const deleteSubscription = async (subscriptionId: number) => {
+  const db = getDb();
+  return db.query('DELETE FROM subscriptions WHERE subscription_id=$1', [subscriptionId])
+}
+
+export const updateSubscription = async (updatedSubscription: Subscription) => {
+  const db = getDb();
+  return db.query('UPDATE subscriptions SET user_id=$2, channel_id=$3 WHERE subscription_id=$1 RETURNING *', [
+    updatedSubscription.subscriptionId,
+    updatedSubscription.userId,
+    updatedSubscription.channelId
+  ]);
+}

@@ -1,4 +1,4 @@
-import { selectAllFromTable, insertUser, selectUser, deleteUser, updateUser, dropTable, insertChannel, selectChannel, updateChannel, deleteChannel } from "../db/helpers";
+import { selectAllFromTable, insertUser, selectUser, deleteUser, updateUser, dropTable, insertChannel, selectChannel, updateChannel, deleteChannel, insertSubscription, selectSubscription, updateSubscription, deleteSubscription } from "../db/helpers";
 import './dbSetupTeardown';
 
 describe('Database helper/utility functions', () => {
@@ -10,7 +10,7 @@ describe('Database helper/utility functions', () => {
 
     it('should drop selected table', async () => {
       // Cannot drop other tables as they have dependencies
-      await dropTable('subscriptions');
+      // await dropTable('subscriptions');
 
       // Aim to access this table. An error should be thrown
       selectAllFromTable('subscriptions')
@@ -114,9 +114,81 @@ describe('Database helper/utility functions', () => {
   });
 
   describe('Subscriptions table functions', () => {
-    it('should select items from the table', async () => {
-      // const res = await selectAllFromTable('users')
-      // expect(res.rows).toHaveLength(0);
+    // Insert user and channel into db before creating subscription entries
+    beforeAll(async () => {
+      await insertUser({
+        userId: '1234',
+        userEmail: 'dan@gmail.com'
+      })
+
+      await insertChannel({
+        channelId: '123456',
+        channelName: 'VGBootCamp'
+      });
+
+      // Second channel insert to allow testing of subscription update
+      await insertChannel({
+        channelId: '12345678',
+        channelName: 'VGBootCamp'
+      })
+    });
+
+    describe('Add subscription to table', () => {
+      it('should insert a subscription into the table', async () => {
+        const res = await insertSubscription({
+          subscriptionId: 1,
+          channelId: '123456',
+          userId: '1234'
+        })
+        expect(res.rowCount).toBe(1);
+        expect(res.rows[0]).toStrictEqual({
+          "subscription_id": 1,
+          "channel_id": "123456",
+          "user_id": "1234",
+        });
+      })
     })
+
+    describe('Select subscription from table', () => {
+      it('should select subscription from the table', async () => {
+        const res = await selectSubscription(1);
+
+        // Should return inserted channel from test above
+        expect(res.rowCount).toBe(1);
+        expect(res.rows[0]).toStrictEqual({
+          "subscription_id": 1,
+          "channel_id": "123456",
+          "user_id": "1234",
+        });
+      })
+    })
+
+    describe('Update subscription in table', () => {
+      it('should update and return new subscription in the table', async () => {
+        const res = await updateSubscription({
+          subscriptionId: 1,
+          channelId: '12345678',
+          userId: '1234'
+        });
+
+        // Should perform single row update only
+        expect(res.rowCount).toBe(1);
+        expect(res.rows[0]).toStrictEqual({
+          "subscription_id": 1,
+          "channel_id": "12345678",
+          "user_id": "1234",
+        });
+      })
+    })
+
+    describe('Delete subscription from table', () => {
+      it('should delete a subscription from the table', async () => {
+        const res = await deleteSubscription(1);
+
+        // Should remove one row only, leaving no more rows in the table
+        expect(res.rowCount).toBe(1);
+        expect(res.rows).toHaveLength(0);
+      });
+    });
   });
 })
