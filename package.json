@@ -5,8 +5,7 @@
   "license": "MIT",
   "scripts": {
     "start": "node dist/server.js",
-    "start-db": "sudo service postgresql restart",
-    "db-login": "psql -U sysadmin -h127.0.0.1 resports",
+    "db": "sudo service postgresql restart && psql -U sysadmin -h127.0.0.1 resports",
     "dev": "nodemon src/server.ts",
     "build": "tsc",
     "test": "jest a",
