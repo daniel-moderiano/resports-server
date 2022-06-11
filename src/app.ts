@@ -1,4 +1,4 @@
-import express, { Application, Request, Response, NextFunction } from 'express';
+import express, { Application } from 'express';
 import userRoutes from './routes/userRoutes';
 import channelRoutes from './routes/channelRoutes';
 import subscriptionRoutes from './routes/subscriptionRoutes';
@@ -20,6 +20,7 @@ const config = {
 };
 
 // auth router attaches /login, /logout, and /callback routes to the baseURL
+// * Although the form_post notification appears, requests should still be able to be sent fine with HTTP. If issues occur, run the npm https script
 app.use(auth(config));
 
 (async () => {
