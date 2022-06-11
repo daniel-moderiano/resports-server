@@ -1,11 +1,23 @@
-import { selectAllFromTable, insertUser, selectUser, deleteUser, updateUser } from "../db/helpers";
+import { selectAllFromTable, insertUser, selectUser, deleteUser, updateUser, dropTable } from "../db/helpers";
 import './dbSetupTeardown';
 
 describe('Database helper/utility functions', () => {
   describe('Generalised functions', () => {
-    it('Should select all items from the table', async () => {
-      const res = await selectAllFromTable('users')
+    it('should select all items from the table', async () => {
+      const res = await selectAllFromTable('channels')
       expect(res.rows).toHaveLength(0);
+    })
+
+    it('should drop selected table', async () => {
+      // Cannot drop other tables as they have dependencies
+      await dropTable('subscriptions');
+
+      // Aim to access this table. An error should be thrown
+      selectAllFromTable('subscriptions')
+        .catch((err) => {
+          // Check for custom severity property thrown by node-pg
+          expect(err.severity).toBe('ERROR')
+        })
     })
   });
 
@@ -14,9 +26,8 @@ describe('Database helper/utility functions', () => {
       it('should insert a user into the table', async () => {
         const res = await insertUser('1234', 'dan@gmail.com')
         expect(res.rowCount).toBe(1);
+        expect(res.rows[0]).toStrictEqual({ "user_id": "1234", "user_email": "dan@gmail.com" });
       })
-
-      // Error handling
     })
 
     describe('Select user from table', () => {
@@ -27,8 +38,6 @@ describe('Database helper/utility functions', () => {
         expect(res.rowCount).toBe(1);
         expect(res.rows[0]).toStrictEqual({ "user_id": "1234", "user_email": "dan@gmail.com" });
       })
-
-      // Error handling
     })
 
     describe('Update user in table', () => {
@@ -42,8 +51,6 @@ describe('Database helper/utility functions', () => {
         expect(res.rowCount).toBe(1);
         expect(res.rows[0]).toStrictEqual({ "user_id": "1234", "user_email": "damo@gmail.com" });
       })
-
-      // Error handling
     })
 
     describe('Delete user from table', () => {
@@ -54,8 +61,6 @@ describe('Database helper/utility functions', () => {
         expect(res.rowCount).toBe(1);
         expect(res.rows).toHaveLength(0);
       });
-
-      // Error handling
     });
 
 
