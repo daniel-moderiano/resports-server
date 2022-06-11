@@ -136,7 +136,6 @@ describe('Database helper/utility functions', () => {
     describe('Add subscription to table', () => {
       it('should insert a subscription into the table', async () => {
         const res = await insertSubscription({
-          subscriptionId: 1,
           channelId: '123456',
           userId: '1234'
         })

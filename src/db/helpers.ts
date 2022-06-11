@@ -11,7 +11,7 @@ interface Channel {
 }
 
 interface Subscription {
-  subscriptionId: number;
+  subscriptionId?: number;
   channelId: string;
   userId: string;
 }
@@ -80,8 +80,7 @@ export const selectSubscription = async (subscriptionId: number) => {
 
 export const insertSubscription = async (subscription: Subscription) => {
   const db = getDb();
-  return db.query('INSERT INTO subscriptions (subscription_id, user_id, channel_id) VALUES ($1, $2, $3) RETURNING *', [
-    subscription.subscriptionId,
+  return db.query('INSERT INTO subscriptions (user_id, channel_id) VALUES ($1, $2) RETURNING *', [
     subscription.userId,
     subscription.channelId
   ])
