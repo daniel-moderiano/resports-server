@@ -1,4 +1,4 @@
-import { selectAllFromTable, insertUser, selectUser, deleteUser, updateUser, dropTable } from "../db/helpers";
+import { selectAllFromTable, insertUser, selectUser, deleteUser, updateUser, dropTable, insertChannel, selectChannel, updateChannel, deleteChannel } from "../db/helpers";
 import './dbSetupTeardown';
 
 describe('Database helper/utility functions', () => {
@@ -24,7 +24,10 @@ describe('Database helper/utility functions', () => {
   describe('Users table functions', () => {
     describe('Add user to table', () => {
       it('should insert a user into the table', async () => {
-        const res = await insertUser('1234', 'dan@gmail.com')
+        const res = await insertUser({
+          userId: '1234',
+          userEmail: 'dan@gmail.com'
+        })
         expect(res.rowCount).toBe(1);
         expect(res.rows[0]).toStrictEqual({ "user_id": "1234", "user_email": "dan@gmail.com" });
       })
@@ -42,7 +45,7 @@ describe('Database helper/utility functions', () => {
 
     describe('Update user in table', () => {
       it('should update and return new user in the table', async () => {
-        const res = await updateUser('1234', {
+        const res = await updateUser({
           userId: '1234',
           userEmail: 'damo@gmail.com'
         });
@@ -62,15 +65,52 @@ describe('Database helper/utility functions', () => {
         expect(res.rows).toHaveLength(0);
       });
     });
-
-
   });
 
   describe('Channels table functions', () => {
-    it('should select items from the table', async () => {
-      // const res = await selectAllFromTable('users')
-      // expect(res.rows).toHaveLength(0);
+    describe('Add channel to table', () => {
+      it('should insert a channel into the table', async () => {
+        const res = await insertChannel({
+          channelId: '123456',
+          channelName: 'VGBootCamp'
+        })
+        expect(res.rowCount).toBe(1);
+        expect(res.rows[0]).toStrictEqual({ "channel_id": "123456", "channel_name": "VGBootCamp" });
+      })
     })
+
+    describe('Select channel from table', () => {
+      it('should select channel from the table', async () => {
+        const res = await selectChannel('123456');
+
+        // Should return inserted channel from test above
+        expect(res.rowCount).toBe(1);
+        expect(res.rows[0]).toStrictEqual({ "channel_id": "123456", "channel_name": "VGBootCamp" });
+      })
+    })
+
+    describe('Update channel in table', () => {
+      it('should update and return new channel in the table', async () => {
+        const res = await updateChannel({
+          channelId: '123456',
+          channelName: 'BTSSmash'
+        });
+
+        // Should perform single row update only
+        expect(res.rowCount).toBe(1);
+        expect(res.rows[0]).toStrictEqual({ "channel_id": "123456", "channel_name": "BTSSmash" });
+      })
+    })
+
+    describe('Delete channel from table', () => {
+      it('should delete a channel from the table', async () => {
+        const res = await deleteChannel('123456');
+
+        // Should remove one row only, leaving no more rows in the table
+        expect(res.rowCount).toBe(1);
+        expect(res.rows).toHaveLength(0);
+      });
+    });
   });
 
   describe('Subscriptions table functions', () => {
