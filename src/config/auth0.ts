@@ -1,6 +1,6 @@
 import 'dotenv/config'
 
-// Auth0 configuration. Used inside the auth middleware in app.ts
+// Auth0 configuration. Used inside the auth router in app.ts
 export const config = {
   authRequired: false,
   auth0Logout: true,

@@ -1,10 +1,15 @@
 // Run this file to initialise the postgreSQL database with the schema outlined below. 
-// ! Do NOT run this file on an existing database or all data will be lost (unless this is what you are after)
+// ! Do NOT run this file on an existing database or all data will be lost (unless you are working with a test db)
 import getDb from ".";
 import 'dotenv/config';
 
 export const init = async () => {
   const db = getDb();
+  if (process.env.TEST_ENV) {
+    console.log('Using test DB');
+  } else {
+    console.log('Using production DB');
+  }
 
   try {
     // Subscriptions table connects the other tables, and must be dropped first
@@ -45,15 +50,18 @@ export const init = async () => {
       );
     `);
 
-    // await db.end();
   } catch (err) {
     console.log(err);
     throw err;
   }
 };
 
-init().then(() => {
-  console.log("finished");
-}).catch(() => {
-  console.log("finished with errors");
-});
+// ! Call this only when you are positive you want to wipe the database
+// (async () => {
+//   try {
+//     await init();
+//     console.log("finished");
+//   } catch (error) {
+//     console.log("finished with errors");
+//   }
+// })();

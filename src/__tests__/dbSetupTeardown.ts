@@ -1,20 +1,20 @@
 import getDb from '../db'
-import { dropTable } from '../db/utils';
+import { init } from '../db/initdb'
 
 // ! Ensure test DB is used
 process.env.TEST_ENV = 'true';
 
-(async () => {
-  await dropTable('items');
-})();
-
-// Ensure test tables are dropped
-// TODO: create utility to drop all tables
+// Ensure all tables are first dropped before re-creating them anew in the test DB
 beforeAll(async () => {
-  await dropTable('items');
+  try {
+    await init();
+    console.log("finished");
+  } catch (error) {
+    console.log("finished with errors");
+  }
 });
 
+// Close the pool on completion
 afterAll(async () => {
-  await dropTable('items');
   await getDb().end();
 });
