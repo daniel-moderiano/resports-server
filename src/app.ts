@@ -1,10 +1,11 @@
-import express, { Application } from 'express';
+import express, { Application, Request } from 'express';
 import channelRoutes from './routes/channelRoutes';
 import subscriptionRoutes from './routes/subscriptionRoutes';
 import getDb from './db/index';
 import 'dotenv/config';
 import { config } from './config/auth0';
 import { auth } from 'express-openid-connect';
+import { errorHandler } from './middleware/errorMiddleware';
 
 process.env.TEST_ENV = 'false';
 
@@ -36,5 +37,8 @@ app.get('/', (req, res) => {
 // app.use('/api/users', userRoutes);
 app.use('/api/channels', channelRoutes);
 app.use('/api/subscriptions', subscriptionRoutes);
+
+// Use error handler AFTER all routes are defined above
+app.use(errorHandler);
 
 export default app;

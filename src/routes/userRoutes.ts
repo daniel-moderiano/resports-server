@@ -1,11 +1,12 @@
 import express from 'express';
 const router = express.Router();
+import asyncHandler from 'express-async-handler'
 
 // Base path /api/users
 
-router.get('/', (req, res) => {
+router.get('/', asyncHandler(async (req, res) => {
   res.send('User route')
-});
+}));
 
 router.get('/login', (req, res) => {
   res.send('Protected login route')
