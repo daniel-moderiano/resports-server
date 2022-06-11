@@ -1,5 +1,4 @@
 import express, { Application } from 'express';
-import userRoutes from './routes/userRoutes';
 import channelRoutes from './routes/channelRoutes';
 import subscriptionRoutes from './routes/subscriptionRoutes';
 import getDb from './db/index';

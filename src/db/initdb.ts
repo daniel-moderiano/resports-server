@@ -3,7 +3,7 @@
 import getDb from ".";
 import 'dotenv/config';
 
-const init = async () => {
+export const init = async () => {
   const db = getDb();
 
   try {
