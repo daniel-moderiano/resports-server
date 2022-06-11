@@ -3,20 +3,12 @@ import channelRoutes from './routes/channelRoutes';
 import subscriptionRoutes from './routes/subscriptionRoutes';
 import getDb from './db/index';
 import 'dotenv/config';
+import { config } from './config/auth0';
 import { auth } from 'express-openid-connect';
 
 process.env.TEST_ENV = 'false';
 
 const app: Application = express();
-
-const config = {
-  authRequired: false,
-  auth0Logout: true,
-  secret: process.env.AUTH_SECRET,
-  baseURL: process.env.BASE_URL,
-  clientID: process.env.CLIENT_ID,
-  issuerBaseURL: process.env.ISSUER
-};
 
 // auth router attaches /login, /logout, and /callback routes to the baseURL
 // * Although the form_post notification appears, requests should still be able to be sent fine with HTTP. If issues occur, run the npm https script

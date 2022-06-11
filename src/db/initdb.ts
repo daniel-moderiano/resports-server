@@ -7,14 +7,15 @@ export const init = async () => {
   const db = getDb();
 
   try {
+    // Subscriptions table connects the other tables, and must be dropped first
+    console.log("dropping subscriptions table, if exists...");
+    await db.query('DROP TABLE IF EXISTS subscriptions;')
+
     console.log("dropping users table, if exists...");
     await db.query('DROP TABLE IF EXISTS users;')
 
     console.log("dropping channels table, if exists...");
     await db.query('DROP TABLE IF EXISTS channels;')
-
-    console.log("dropping subscriptions table, if exists...");
-    await db.query('DROP TABLE IF EXISTS subscriptions;')
 
     // Authentication with Auth0 - the user_id will be added following user auth with Auth0, which generates a unique ID
     console.log("creating users table...");
@@ -44,7 +45,7 @@ export const init = async () => {
       );
     `);
 
-    await db.end();
+    // await db.end();
   } catch (err) {
     console.log(err);
     throw err;
