@@ -8,9 +8,8 @@ process.env.TEST_ENV = 'true';
 beforeAll(async () => {
   try {
     await init();
-    console.log("finished");
   } catch (error) {
-    console.log("finished with errors");
+    console.log("Error with DB initialisation");
   }
 });
 

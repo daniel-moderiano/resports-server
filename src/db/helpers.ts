@@ -18,3 +18,4 @@ export const createTable = async function (tableName: string) {
 
   await db.query(`CREATE TABLE IF NOT EXISTS ${tableName};`);
 };
+

@@ -5,25 +5,20 @@ import 'dotenv/config';
 
 export const init = async () => {
   const db = getDb();
-  if (process.env.TEST_ENV) {
-    console.log('Using test DB');
-  } else {
-    console.log('Using production DB');
-  }
 
   try {
     // Subscriptions table connects the other tables, and must be dropped first
-    console.log("dropping subscriptions table, if exists...");
+    !process.env.TEST_ENV && console.log("dropping subscriptions table, if exists...");
     await db.query('DROP TABLE IF EXISTS subscriptions;')
 
-    console.log("dropping users table, if exists...");
+    !process.env.TEST_ENV && console.log("dropping users table, if exists...");
     await db.query('DROP TABLE IF EXISTS users;')
 
-    console.log("dropping channels table, if exists...");
+    !process.env.TEST_ENV && console.log("dropping channels table, if exists...");
     await db.query('DROP TABLE IF EXISTS channels;')
 
     // Authentication with Auth0 - the user_id will be added following user auth with Auth0, which generates a unique ID
-    console.log("creating users table...");
+    !process.env.TEST_ENV && console.log("creating users table...");
     await db.query(`
       CREATE TABLE users (
         user_id TEXT PRIMARY KEY NOT NULL,
@@ -32,7 +27,7 @@ export const init = async () => {
     `);
 
     // Consider additional information e.g. channel logo_url, description, etc.
-    console.log("creating channels table...");
+    !process.env.TEST_ENV && console.log("creating channels table...");
     await db.query(`
       CREATE TABLE channels (
         channel_id serial PRIMARY KEY,
@@ -41,7 +36,7 @@ export const init = async () => {
     `);
 
     // Join table connecting users with channels
-    console.log("creating subscriptions table...");
+    !process.env.TEST_ENV && console.log("creating subscriptions table...");
     await db.query(`
       CREATE TABLE subscriptions (
         subscription_id serial PRIMARY KEY,
