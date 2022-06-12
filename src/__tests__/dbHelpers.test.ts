@@ -149,8 +149,20 @@ describe('Database helper/utility functions', () => {
     })
 
     describe('Select subscription from table', () => {
-      it('should select subscription from the table', async () => {
+      it('should select subscription from the table using integer input', async () => {
         const res = await selectSubscription(1);
+
+        // Should return inserted channel from test above
+        expect(res.rowCount).toBe(1);
+        expect(res.rows[0]).toStrictEqual({
+          "subscription_id": 1,
+          "channel_id": "123456",
+          "user_id": "1234",
+        });
+      })
+
+      it('should select subscription from the table using string input', async () => {
+        const res = await selectSubscription('1');
 
         // Should return inserted channel from test above
         expect(res.rowCount).toBe(1);
