@@ -33,15 +33,6 @@ describe('Routes', () => {
     });
   });
 
-  describe('Channel routes', () => {
-    it("User route correctly configured", done => {
-      request(app)
-        .get('/api/channels/')
-        .expect('Channel route')
-        .expect(200, done)
-    });
-  });
-
   describe('Subscription routes', () => {
     it("User route correctly configured", done => {
       request(app)
@@ -52,7 +43,7 @@ describe('Routes', () => {
   });
 });
 
-// // #Format #2
+// #Format #2
 // it("Return Hello once more", async () => {
 //   const res = await request(app).get('/');
 //   expect(res.statusCode).toEqual(200);
