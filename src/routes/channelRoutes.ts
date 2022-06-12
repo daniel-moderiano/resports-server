@@ -8,12 +8,13 @@ router.get('/', asyncHandler(async (req, res) => {
   res.send('Channel route')
 }));
 
+router.post('/', asyncHandler(async (req, res) => {
+  res.send('Add channel')
+}))
+
 router.route('/:channelId')
   .get(asyncHandler(async (req, res) => {
     res.send(`Get channel ${req.params.channelId}`)
-  }))
-  .post(asyncHandler(async (req, res) => {
-    res.send(`Add channel ${req.params.channelId}`)
   }))
   .delete(asyncHandler(async (req, res) => {
     res.send(`Delete channel ${req.params.channelId}`)
