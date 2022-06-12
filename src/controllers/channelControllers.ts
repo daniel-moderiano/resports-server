@@ -1,10 +1,14 @@
 import asyncHandler from 'express-async-handler';
+import { selectAllFromTable } from '../db/helpers';
 
 // @desc    Get all channels
 // @route   GET /api/channels
 // @access  Private
 const getAllChannels = asyncHandler(async (req, res) => {
-  res.send('Get all channels');
+  const queryRes = await selectAllFromTable('channels');
+  console.log(queryRes.rows);
+
+  res.json(queryRes.rows);
 });
 
 
