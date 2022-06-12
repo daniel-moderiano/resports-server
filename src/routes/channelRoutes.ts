@@ -1,6 +1,5 @@
 import express from 'express';
 const router = express.Router();
-import asyncHandler from 'express-async-handler'
 import { getAllChannels, getChannel, addChannel, updateChannel, deleteChannel } from '../controllers/channelControllers'
 
 // Base path /api/channels

@@ -73,7 +73,8 @@ export const updateChannel = async (updatedChannel: Channel) => {
 
 
 // SUBSCRIPTIONS TABLE FUNCTIONS
-export const selectSubscription = async (subscriptionId: number) => {
+// Although in the database the ID is a numeric type, subscription ID will frequently be in the form of a string elsewhere. Whether the query is made using string or int input does not change the outcome, hence both types are accepted
+export const selectSubscription = async (subscriptionId: number | string) => {
   const db = getDb();
   return db.query('SELECT * FROM subscriptions WHERE subscription_id=$1', [subscriptionId])
 }
