@@ -1,10 +1,16 @@
 import express from 'express';
 const router = express.Router();
+import { getSubscription, getAllSubscriptions, addSubscription, updateSubscription, deleteSubscription } from '../controllers/subscriptionControllers'
 
 // Base path /api/subscriptions
 
-router.get('/', (req, res) => {
-  res.send('Subscription route')
-});
+router.get('/', getAllSubscriptions);
+
+router.post('/', addSubscription)
+
+router.route('/:subscriptionId')
+  .get(getSubscription)
+  .put(updateSubscription)
+  .delete(deleteSubscription);
 
 export default router;
