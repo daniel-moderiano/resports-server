@@ -5,7 +5,7 @@ describe('Base channel API routes', () => {
   it("Index channel route correctly configured", done => {
     request(app)
       .get('/api/channels/')
-      .expect('Channel route')
+      .expect('Get all channels')
       .expect(200, done)
   });
 
@@ -30,8 +30,6 @@ describe('Base channel API routes', () => {
         .expect('Update channel 1234')
         .expect(200, done)
     });
-
-
 
     it("Delete single channel route correctly configured", done => {
       request(app)

@@ -4,7 +4,7 @@ import asyncHandler from 'express-async-handler';
 // @route   GET /api/channels
 // @access  Private
 const getAllChannels = asyncHandler(async (req, res) => {
-  res.send('Channel route');
+  res.send('Get all channels');
 });
 
 
@@ -12,7 +12,7 @@ const getAllChannels = asyncHandler(async (req, res) => {
 // @route   GET /api/channels/channelId
 // @access  Private
 const getChannel = asyncHandler(async (req, res) => {
-  res.send('Channel route');
+  res.send(`Get channel ${req.params.channelId}`)
 });
 
 
@@ -20,7 +20,7 @@ const getChannel = asyncHandler(async (req, res) => {
 // @route   POST /api/channels
 // @access  Private
 const addChannel = asyncHandler(async (req, res) => {
-  res.send('Channel route');
+  res.send('Add channel');
 });
 
 
@@ -28,7 +28,7 @@ const addChannel = asyncHandler(async (req, res) => {
 // @route   PUT /api/channels/channelId
 // @access  Private
 const updateChannel = asyncHandler(async (req, res) => {
-  res.send('Channel route');
+  res.send(`Update channel ${req.params.channelId}`)
 });
 
 
@@ -36,6 +36,13 @@ const updateChannel = asyncHandler(async (req, res) => {
 // @route   DELETE /api/channels/channelId
 // @access  Private
 const deleteChannel = asyncHandler(async (req, res) => {
-  res.send('Channel route');
+  res.send(`Delete channel ${req.params.channelId}`)
 });
 
+export {
+  getAllChannels,
+  getChannel,
+  addChannel,
+  updateChannel,
+  deleteChannel
+}
