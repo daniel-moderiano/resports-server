@@ -35,6 +35,9 @@ const getChannel = asyncHandler(async (req, res) => {
   res.status(200).json(channel);
 });
 
+
+// ? The following routes may not be neccessary - leave for now until users/subscriptions routes are complete
+
 // @desc    Add new channel
 // @route   POST /api/channels
 // @access  Private
