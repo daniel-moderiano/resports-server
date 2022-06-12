@@ -2,13 +2,6 @@ import app from "../app";
 import request from 'supertest'
 
 describe('Base channel API routes', () => {
-  it("Index channel route correctly configured", done => {
-    request(app)
-      .get('/api/channels/')
-      .expect('Get all channels')
-      .expect(200, done)
-  });
-
   it("Add single channel route correctly configured", done => {
     request(app)
       .post('/api/channels')

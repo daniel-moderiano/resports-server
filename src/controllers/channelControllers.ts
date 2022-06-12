@@ -5,10 +5,8 @@ import { selectAllFromTable } from '../db/helpers';
 // @route   GET /api/channels
 // @access  Private
 const getAllChannels = asyncHandler(async (req, res) => {
-  const queryRes = await selectAllFromTable('channels');
-  console.log(queryRes.rows);
-
-  res.json(queryRes.rows);
+  const result = await selectAllFromTable('channels');
+  res.json(result.rows);
 });
 
 

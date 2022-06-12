@@ -2,7 +2,7 @@ import { getAllChannels } from '../controllers/channelControllers';
 import request from 'supertest';
 import express from 'express';
 import './dbSetupTeardown';
-import { insertChannel } from '../db/helpers';
+import { deleteChannel, insertChannel } from '../db/helpers';
 
 // Setup new app instance
 const app = express();
@@ -17,7 +17,7 @@ beforeAll(async () => {
 });
 
 describe('getAllChannels controller', () => {
-  it("retrieves all channels in the DB", async () => {
+  it("retrieves all channels in the database", async () => {
     const res = await request(app).get('/');
     expect(res.headers['content-type']).toMatch(/json/);
     expect(res.statusCode).toEqual(200);
@@ -28,12 +28,15 @@ describe('getAllChannels controller', () => {
     ]);
   });
 
-  it("throws error on bad request", async () => {
-    // const res = await request(app).get(`/posts/${postId}/comments`);
-    // expect(res.headers['content-type']).toMatch(/json/);
-    // expect(res.statusCode).toEqual(200);
-    // // First comment is by Peter Parker
-    // expect(res.body[0].user.fullName).toBe('Peter Parker');
+  it("returns empty array when no channels exist in the database", async () => {
+    // Delete existing channels first
+    await deleteChannel('1234');
+    await deleteChannel('5678');
+
+    const res = await request(app).get('/');
+    expect(res.headers['content-type']).toMatch(/json/);
+    expect(res.statusCode).toEqual(200);
+    expect(res.body).toStrictEqual([]);
   });
 });
 
