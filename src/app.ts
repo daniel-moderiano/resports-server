@@ -4,7 +4,7 @@ import subscriptionRoutes from './routes/subscriptionRoutes';
 import getDb from './db/index';
 import 'dotenv/config';
 import { config } from './config/auth0';
-import { auth } from 'express-openid-connect';
+import { auth, requiresAuth } from 'express-openid-connect';
 import { errorHandler } from './middleware/errorMiddleware';
 
 process.env.TEST_ENV = 'false';
@@ -41,6 +41,11 @@ app.get('/sign-up', (req, res) => {
     },
     returnTo: 'http://localhost:5000'
   });
+});
+
+// Test protected route
+app.get('/admin', requiresAuth(), (req, res) => {
+  res.send('This is a protected route')
 });
 
 // Use routes
