@@ -35,14 +35,15 @@ export const init = async () => {
       );
     `);
 
-    // Join table connecting users with channels
+    // Join table connecting users with channels. Must be a unique combination of useer/channel, i.e. no repeat subscriptions
     !process.env.TEST_ENV && console.log("creating subscriptions table...");
     await db.query(`
       CREATE TABLE subscriptions (
         subscription_id serial PRIMARY KEY,
         platform text NOT NULL,
         user_id TEXT NOT NULL,
-        channel_id TEXT REFERENCES channels(channel_id)
+        channel_id TEXT REFERENCES channels(channel_id),
+        UNIQUE (user_id, channel_id)
       );
     `);
 
