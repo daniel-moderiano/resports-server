@@ -19,7 +19,6 @@ beforeAll(async () => {
 describe('getAllChannels controller', () => {
   it("retrieves all channels in the database", async () => {
     const res = await request(app).get('/');
-    console.log(res);
 
     expect(res.headers['content-type']).toMatch(/json/);
     expect(res.statusCode).toEqual(200);
