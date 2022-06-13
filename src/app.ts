@@ -4,7 +4,7 @@ import subscriptionRoutes from './routes/subscriptionRoutes';
 import getDb from './db/index';
 import 'dotenv/config';
 import { config } from './config/auth0';
-import { auth } from 'express-openid-connect';
+import { auth, requiresAuth } from 'express-openid-connect';
 import { errorHandler } from './middleware/errorMiddleware';
 
 process.env.TEST_ENV = 'false';
@@ -24,13 +24,29 @@ app.use(auth(config));
 // req.isAuthenticated is provided from the auth router
 app.get('/', (req, res) => {
   if (req.oidc.isAuthenticated() && req.oidc.user) {
-    console.log(req.oidc.user);
-    console.log(`User ID: ${req.oidc.user.sub.split('|')[1]}`);
+    // console.log(`User ID: ${req.oidc.user.sub.split('|')[1]}`);
 
     res.send('Logged in')
   } else {
     res.send('Unauthorised, please log in')
   }
+});
+
+// Ensure a returnTo URL is provided to avoid infinite loops in redirects
+app.get('/sign-up', (req, res) => {
+  res.oidc.login({
+    authorizationParams: {
+      screen_hint: 'signup',
+    },
+    returnTo: 'http://localhost:5000'
+  });
+});
+
+// Test protected route
+app.get('/admin', requiresAuth(), (req, res) => {
+  console.log(req.oidc.isAuthenticated(), req.oidc.user);
+
+  res.send('This is a protected route')
 });
 
 // Use routes

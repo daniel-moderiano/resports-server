@@ -10,8 +10,10 @@ interface Channel {
   channelName: string;
 }
 
+// SubscriptionId is optional so this interface can be used for inserting new entries (ID auto generated in that case)
 interface Subscription {
   subscriptionId?: number;
+  platform: string;
   channelId: string;
   userId: string;
 }
@@ -81,9 +83,10 @@ export const selectSubscription = async (subscriptionId: number | string) => {
 
 export const insertSubscription = async (subscription: Subscription) => {
   const db = getDb();
-  return db.query('INSERT INTO subscriptions (user_id, channel_id) VALUES ($1, $2) RETURNING *', [
+  return db.query('INSERT INTO subscriptions (user_id, channel_id, platform) VALUES ($1, $2, $3) RETURNING *', [
     subscription.userId,
-    subscription.channelId
+    subscription.channelId,
+    subscription.platform
   ])
 }
 
@@ -94,9 +97,10 @@ export const deleteSubscription = async (subscriptionId: number) => {
 
 export const updateSubscription = async (updatedSubscription: Subscription) => {
   const db = getDb();
-  return db.query('UPDATE subscriptions SET user_id=$2, channel_id=$3 WHERE subscription_id=$1 RETURNING *', [
+  return db.query('UPDATE subscriptions SET user_id=$2, channel_id=$3, platform=$4 WHERE subscription_id=$1 RETURNING *', [
     updatedSubscription.subscriptionId,
     updatedSubscription.userId,
-    updatedSubscription.channelId
+    updatedSubscription.channelId,
+    updatedSubscription.platform
   ]);
 }
