@@ -5,7 +5,7 @@ import { requiresAuth } from 'express-openid-connect';
 
 // Base path /api/channels
 
-router.get('/', requiresAuth(), getAllChannels);
+router.get('/', getAllChannels);
 
 router.post('/', requiresAuth(), addChannel)
 

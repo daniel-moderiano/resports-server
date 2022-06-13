@@ -1,9 +1,11 @@
 import asyncHandler from 'express-async-handler';
 import { selectAllFromTable, selectSubscription } from '../db/helpers';
 
-interface subscription {
-  subscription_id: string;
-  subscription_name: string;
+interface Subscription {
+  subscription_id: number;
+  user_id: string;
+  channel_id: string;
+  platform: string;
 }
 
 // @desc    Get all subscriptions

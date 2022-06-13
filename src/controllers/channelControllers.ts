@@ -10,10 +10,6 @@ interface Channel {
 // @route   GET /api/channels
 // @access  Private
 const getAllChannels = asyncHandler(async (req, res) => {
-  if (req.oidc.user) {
-    console.log(`${req.oidc.user.name} accessing channels route`);
-  }
-
   const result = await selectAllFromTable('channels');
   res.json(result.rows);
 });
