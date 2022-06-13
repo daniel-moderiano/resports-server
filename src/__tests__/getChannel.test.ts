@@ -17,7 +17,7 @@ beforeAll(async () => {
 });
 
 describe('getChannel controller', () => {
-  it("retrieves correct channels in the database", async () => {
+  it("retrieves correct channel in the database", async () => {
     const res = await request(app).get('/channels/1234');
     expect(res.headers['content-type']).toMatch(/json/);
     expect(res.statusCode).toEqual(200);
