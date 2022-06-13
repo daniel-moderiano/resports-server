@@ -13,21 +13,20 @@ interface Subscription {
 // @route   GET /api/subscriptions/subscriptionId
 // @access  Private
 const getSubscription = asyncHandler(async (req, res) => {
-  res.send(`Get sub ${req.params.subscriptionId}`)
-  // // subscription ID grabbed from URL params
-  // const subscriptionId = req.params.subscriptionId;
-  // const result = await selectSubscription(subscriptionId);
+  // subscription ID grabbed from URL params
+  const subscriptionId = req.params.subscriptionId;
+  const result = await selectSubscription(subscriptionId);
 
-  // // ? Is this typescript addition needlessly complex?
-  // const subscription: subscription | undefined = result.rows[0];
+  // ? Is this typescript addition needlessly complex?
+  const subscription: Subscription | undefined = result.rows[0];
 
-  // if (!subscription) {    // subscription not found
-  //   res.status(400);
-  //   throw new Error('subscription not found');
-  // }
+  if (!subscription) {    // subscription not found
+    res.status(400);
+    throw new Error('subscription not found');
+  }
 
-  // // subscription found in db; return subscription details
-  // res.status(200).json(subscription);
+  // subscription found in db; return subscription details
+  res.status(200).json(subscription);
 });
 
 

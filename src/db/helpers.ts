@@ -12,7 +12,7 @@ interface Channel {
 
 // SubscriptionId is optional so this interface can be used for inserting new entries (ID auto generated in that case)
 interface Subscription {
-  subscriptionId?: number;
+  subscriptionId?: number | string;
   platform: string;
   channelId: string;
   userId: string;
@@ -95,7 +95,7 @@ export const insertSubscription = async (subscription: Subscription) => {
   ])
 }
 
-export const deleteSubscription = async (subscriptionId: number) => {
+export const deleteSubscription = async (subscriptionId: number | string) => {
   const db = getDb();
   return db.query('DELETE FROM subscriptions WHERE subscription_id=$1', [subscriptionId])
 }
