@@ -5,7 +5,7 @@ import { requiresAuth } from 'express-openid-connect'
 
 // Base path /api/subscriptions
 
-router.get('/', getAllSubscriptions);
+router.get('/', requiresAuth(), getAllSubscriptions);
 
 router.post('/', addSubscription)
 
