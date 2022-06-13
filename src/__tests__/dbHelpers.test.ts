@@ -1,4 +1,4 @@
-import { selectAllFromTable, insertUser, selectUser, deleteUser, updateUser, dropTable, insertChannel, selectChannel, updateChannel, deleteChannel, insertSubscription, selectSubscription, updateSubscription, deleteSubscription } from "../db/helpers";
+import { selectAllFromTable, insertUser, selectUser, deleteUser, updateUser, dropTable, insertChannel, selectChannel, updateChannel, deleteChannel, insertSubscription, selectSubscription, updateSubscription, deleteSubscription, selectUserSubscriptions } from "../db/helpers";
 import './dbSetupTeardown';
 
 describe('Database helper/utility functions', () => {
@@ -116,11 +116,6 @@ describe('Database helper/utility functions', () => {
   describe('Subscriptions table functions', () => {
     // Insert user and channel into db before creating subscription entries
     beforeAll(async () => {
-      // await insertUser({
-      //   userId: '1234',
-      //   userEmail: 'dan@gmail.com'
-      // })
-
       await insertChannel({
         channelId: '123456',
         channelName: 'VGBootCamp'
@@ -129,7 +124,7 @@ describe('Database helper/utility functions', () => {
       // Second channel insert to allow testing of subscription update
       await insertChannel({
         channelId: '12345678',
-        channelName: 'VGBootCamp'
+        channelName: 'BTSSmash'
       })
     });
 
@@ -150,7 +145,7 @@ describe('Database helper/utility functions', () => {
       })
     })
 
-    describe('Select subscription from table', () => {
+    describe('Select subscription from table using subscription ID', () => {
       it('should select subscription from the table using integer input', async () => {
         const res = await selectSubscription(1);
 
@@ -175,6 +170,40 @@ describe('Database helper/utility functions', () => {
           "user_id": "1234",
           "platform": "twitch"
         });
+      })
+    })
+
+    describe('Select subscriptions from table using user ID', () => {
+      it('should select all subscriptions belonging to one user from the table', async () => {
+        // Insert some extra subscriptions into the db
+        await insertSubscription({
+          channelId: '12345678',
+          platform: 'twitch',
+          userId: '1234'
+        });
+
+        await insertSubscription({
+          channelId: '12345678',
+          platform: 'twitch',
+          userId: '5678'
+        })
+
+        const res = await selectUserSubscriptions('1234');
+
+        // Should return two of the three subscriptions in the database
+        expect(res.rowCount).toBe(2);
+        expect(res.rows).toStrictEqual([{
+          "subscription_id": 1,
+          "channel_id": "123456",
+          "user_id": "1234",
+          "platform": "twitch"
+        },
+        {
+          "subscription_id": 2,
+          "channel_id": "12345678",
+          "user_id": "1234",
+          "platform": "twitch"
+        }]);
       })
     })
 

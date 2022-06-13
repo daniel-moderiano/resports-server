@@ -79,6 +79,11 @@ export const updateChannel = async (updatedChannel: Channel) => {
 export const selectSubscription = async (subscriptionId: number | string) => {
   const db = getDb();
   return db.query('SELECT * FROM subscriptions WHERE subscription_id=$1', [subscriptionId])
+};
+
+export const selectUserSubscriptions = async (userId: string) => {
+  const db = getDb();
+  return db.query('SELECT * FROM subscriptions WHERE user_id=$1', [userId])
 }
 
 export const insertSubscription = async (subscription: Subscription) => {
