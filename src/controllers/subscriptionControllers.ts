@@ -8,14 +8,6 @@ interface Subscription {
   platform: string;
 }
 
-// @desc    Get all subscriptions
-// @route   GET /api/subscriptions
-// @access  Private
-const getAllSubscriptions = asyncHandler(async (req, res) => {
-  const result = await selectAllFromTable('subscriptions');
-  res.json(result.rows);
-});
-
 
 // @desc    Get subscription
 // @route   GET /api/subscriptions/subscriptionId
@@ -46,15 +38,6 @@ const addSubscription = asyncHandler(async (req, res) => {
   res.send('Add sub');
 });
 
-
-// @desc    Update subscription entry
-// @route   PUT /api/subscriptions/subscriptionId
-// @access  Private
-const updateSubscription = asyncHandler(async (req, res) => {
-  res.send(`Update sub ${req.params.subscriptionId}`)
-});
-
-
 // @desc    Delete subscription
 // @route   DELETE /api/subscriptions/subscriptionId
 // @access  Private
@@ -63,9 +46,7 @@ const deleteSubscription = asyncHandler(async (req, res) => {
 });
 
 export {
-  getAllSubscriptions,
   getSubscription,
   addSubscription,
-  updateSubscription,
   deleteSubscription
 }

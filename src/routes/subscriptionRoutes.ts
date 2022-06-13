@@ -1,17 +1,14 @@
 import express from 'express';
 const router = express.Router();
-import { getSubscription, getAllSubscriptions, addSubscription, updateSubscription, deleteSubscription } from '../controllers/subscriptionControllers';
+import { getSubscription, addSubscription, deleteSubscription } from '../controllers/subscriptionControllers';
 import { requiresAuth } from 'express-openid-connect'
 
 // Base path /api/subscriptions
 
-router.get('/', requiresAuth(), getAllSubscriptions);
+router.post('/', requiresAuth(), addSubscription)
 
-router.post('/', addSubscription)
+router.get('/:subscriptionId', requiresAuth(), getSubscription);
 
-router.route('/:subscriptionId')
-  .get(getSubscription)
-  .put(updateSubscription)
-  .delete(deleteSubscription);
+router.delete('/:subscriptionId', requiresAuth(), deleteSubscription);
 
 export default router;
