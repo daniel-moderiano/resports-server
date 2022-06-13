@@ -1,16 +1,17 @@
 import express from 'express';
 const router = express.Router();
 import { getAllChannels, getChannel, addChannel, updateChannel, deleteChannel } from '../controllers/channelControllers'
+import { requiresAuth } from 'express-openid-connect';
 
 // Base path /api/channels
 
-router.get('/', getAllChannels);
+router.get('/', requiresAuth(), getAllChannels);
 
-router.post('/', addChannel)
+router.post('/', requiresAuth(), addChannel)
 
 router.route('/:channelId')
-  .get(getChannel)
-  .put(updateChannel)
-  .delete(deleteChannel);
+  .get(requiresAuth(), getChannel)
+  .put(requiresAuth(), updateChannel)
+  .delete(requiresAuth(), deleteChannel);
 
 export default router;

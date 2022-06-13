@@ -24,8 +24,7 @@ app.use(auth(config));
 // req.isAuthenticated is provided from the auth router
 app.get('/', (req, res) => {
   if (req.oidc.isAuthenticated() && req.oidc.user) {
-    console.log(req.oidc.user);
-    console.log(`User ID: ${req.oidc.user.sub.split('|')[1]}`);
+    // console.log(`User ID: ${req.oidc.user.sub.split('|')[1]}`);
 
     res.send('Logged in')
   } else {
@@ -45,6 +44,8 @@ app.get('/sign-up', (req, res) => {
 
 // Test protected route
 app.get('/admin', requiresAuth(), (req, res) => {
+  console.log(req.oidc.isAuthenticated(), req.oidc.user);
+
   res.send('This is a protected route')
 });
 

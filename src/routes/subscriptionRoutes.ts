@@ -1,6 +1,7 @@
 import express from 'express';
 const router = express.Router();
-import { getSubscription, getAllSubscriptions, addSubscription, updateSubscription, deleteSubscription } from '../controllers/subscriptionControllers'
+import { getSubscription, getAllSubscriptions, addSubscription, updateSubscription, deleteSubscription } from '../controllers/subscriptionControllers';
+import { requiresAuth } from 'express-openid-connect'
 
 // Base path /api/subscriptions
 
