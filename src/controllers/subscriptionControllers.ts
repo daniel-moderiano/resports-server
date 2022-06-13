@@ -1,5 +1,5 @@
 import asyncHandler from 'express-async-handler';
-import { selectAllFromTable, selectSubscription } from '../db/helpers';
+import { deleteSubscription, selectAllFromTable, selectSubscription } from '../db/helpers';
 
 interface Subscription {
   subscription_id: number;
@@ -40,12 +40,26 @@ const addSubscription = asyncHandler(async (req, res) => {
 // @desc    Delete subscription
 // @route   DELETE /api/subscriptions/subscriptionId
 // @access  Private
-const deleteSubscription = asyncHandler(async (req, res) => {
-  res.send(`Delete sub ${req.params.subscriptionId}`)
+// * Named with 'Controller' suffix to distinguish from database helper function with the same name
+const deleteSubscriptionController = asyncHandler(async (req, res) => {
+  // subscription ID grabbed from URL params
+  const subscriptionId = req.params.subscriptionId;
+  const result = await deleteSubscription(subscriptionId);
+
+  // ? Is this typescript addition needlessly complex?
+  const subscription: Subscription | undefined = result.rows[0];
+
+  if (!subscription) {    // subscription not found
+    res.status(400);
+    throw new Error('subscription not found');
+  }
+
+  // subscription found in db; return deleted subscription
+  res.status(200).json(result.rows[0]);
 });
 
 export {
   getSubscription,
   addSubscription,
-  deleteSubscription
+  deleteSubscriptionController
 }

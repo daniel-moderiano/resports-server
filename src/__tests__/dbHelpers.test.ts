@@ -166,15 +166,20 @@ describe('Database helper/utility functions', () => {
     })
 
     describe('Delete subscription from table', () => {
-      it('should delete a subscription from the table (integer input)', async () => {
+      it('should delete a subscription from the table (integer input) and return deleted subscription', async () => {
         const res = await deleteSubscription(1);
 
         // Should remove one row only, leaving no more rows in the table
         expect(res.rowCount).toBe(1);
-        expect(res.rows).toHaveLength(0);
+        expect(res.rows[0]).toStrictEqual({
+          "subscription_id": 1,
+          "channel_id": "123456",
+          "user_id": "1234",
+          "platform": "twitch"
+        });
       });
 
-      it('should delete a subscription from the table (string input)', async () => {
+      it('should delete a subscription from the table (string input) and return deleted subscription', async () => {
         // Reinsert subscription
         await insertSubscription({
           channelId: '123456',
@@ -187,7 +192,12 @@ describe('Database helper/utility functions', () => {
 
         // Should remove one row only, leaving no more rows in the table
         expect(res.rowCount).toBe(1);
-        expect(res.rows).toHaveLength(0);
+        expect(res.rows[0]).toStrictEqual({
+          "subscription_id": 2,
+          "channel_id": "123456",
+          "user_id": "1234",
+          "platform": "twitch"
+        });
       });
     });
 

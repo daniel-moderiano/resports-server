@@ -97,7 +97,7 @@ export const insertSubscription = async (subscription: Subscription) => {
 
 export const deleteSubscription = async (subscriptionId: number | string) => {
   const db = getDb();
-  return db.query('DELETE FROM subscriptions WHERE subscription_id=$1', [subscriptionId])
+  return db.query('DELETE FROM subscriptions WHERE subscription_id=$1 RETURNING *', [subscriptionId])
 }
 
 export const updateSubscription = async (updatedSubscription: Subscription) => {
