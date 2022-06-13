@@ -33,6 +33,16 @@ app.get('/', (req, res) => {
   }
 });
 
+// Ensure a returnTo URL is provided to avoid infinite loops in redirects
+app.get('/sign-up', (req, res) => {
+  res.oidc.login({
+    authorizationParams: {
+      screen_hint: 'signup',
+    },
+    returnTo: 'http://localhost:5000'
+  });
+});
+
 // Use routes
 // app.use('/api/users', userRoutes);
 app.use('/api/channels', channelRoutes);
