@@ -10,24 +10,24 @@ const app = express();
 // Use the controller
 app.get('/subscriptions/:subscriptionId', getSubscription);
 
-// Add some channels and subs to the test database
-beforeAll(async () => {
-  await insertChannel({ channelId: '1234', channelName: 'VGBootCamp' });
-  await insertChannel({ channelId: '5678', channelName: 'BTSSmash' });
-  await insertSubscription({
-    channelId: '1234',
-    platform: 'twitch',
-    userId: '1234'
+describe('getSubscription controller', () => {
+  // Add some channels and subs to the test database
+  beforeAll(async () => {
+    await insertChannel({ channelId: '1234', channelName: 'VGBootCamp' });
+    await insertChannel({ channelId: '5678', channelName: 'BTSSmash' });
+    await insertSubscription({
+      channelId: '1234',
+      platform: 'twitch',
+      userId: '1234'
+    });
+
+    await insertSubscription({
+      channelId: '5678',
+      platform: 'twitch',
+      userId: '1234'
+    })
   });
 
-  await insertSubscription({
-    channelId: '5678',
-    platform: 'twitch',
-    userId: '1234'
-  })
-});
-
-describe('getSubscription controller', () => {
   it("retrieves correct subscription in the database", async () => {
     const res = await request(app).get('/subscriptions/2');
     expect(res.headers['content-type']).toMatch(/json/);

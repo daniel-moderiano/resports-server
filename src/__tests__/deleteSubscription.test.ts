@@ -10,17 +10,17 @@ const app = express();
 // Use the controller
 app.delete('/subscriptions/:subscriptionId', deleteSubscriptionController);
 
-// Add a subscription to the test database
-beforeAll(async () => {
-  await insertChannel({ channelId: '1234', channelName: 'VGBootCamp' });
-  await insertSubscription({
-    channelId: '1234',
-    platform: 'twitch',
-    userId: '1234'
-  });
-});
-
 describe('deleteSubscription controller', () => {
+  // Add a subscription to the test database
+  beforeAll(async () => {
+    await insertChannel({ channelId: '1234', channelName: 'VGBootCamp' });
+    await insertSubscription({
+      channelId: '1234',
+      platform: 'twitch',
+      userId: '1234'
+    });
+  });
+
   it("deletes subscription in the database", async () => {
     const res = await request(app).delete('/subscriptions/1');
     expect(res.headers['content-type']).toMatch(/json/);
