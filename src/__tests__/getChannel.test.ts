@@ -10,13 +10,13 @@ const app = express();
 // Use the controller
 app.get('/channels/:channelId', getChannel);
 
-// Add some channels to the test database
-beforeAll(async () => {
-  await insertChannel({ channelId: '1234', channelName: 'VGBootCamp' });
-  await insertChannel({ channelId: '5678', channelName: 'BTSSmash' });
-});
-
 describe('getChannel controller', () => {
+  // Add some channels to the test database
+  beforeAll(async () => {
+    await insertChannel({ channelId: '1234', channelName: 'VGBootCamp' });
+    await insertChannel({ channelId: '5678', channelName: 'BTSSmash' });
+  });
+
   it("retrieves correct channel in the database", async () => {
     const res = await request(app).get('/channels/1234');
     expect(res.headers['content-type']).toMatch(/json/);
@@ -25,7 +25,7 @@ describe('getChannel controller', () => {
     expect(res.body).toStrictEqual({ channel_id: '1234', channel_name: 'VGBootCamp' });
   });
 
-  it("throws 'not found' error if channel is not in database", async () => {
+  it("throws error if channel is not in database", async () => {
     // Delete existing channels first
     await deleteChannel('1234');
     await deleteChannel('5678');

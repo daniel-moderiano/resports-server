@@ -10,16 +10,15 @@ const app = express();
 // Use the controller
 app.get('/', getAllChannels);
 
-// Add some channels to the test database
-beforeAll(async () => {
-  await insertChannel({ channelId: '1234', channelName: 'VGBootCamp' });
-  await insertChannel({ channelId: '5678', channelName: 'BTSSmash' });
-});
-
 describe('getAllChannels controller', () => {
+  // Add some channels to the test database
+  beforeAll(async () => {
+    await insertChannel({ channelId: '1234', channelName: 'VGBootCamp' });
+    await insertChannel({ channelId: '5678', channelName: 'BTSSmash' });
+  });
+
   it("retrieves all channels in the database", async () => {
     const res = await request(app).get('/');
-    console.log(res);
 
     expect(res.headers['content-type']).toMatch(/json/);
     expect(res.statusCode).toEqual(200);

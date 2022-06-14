@@ -12,7 +12,7 @@ interface Channel {
 
 // SubscriptionId is optional so this interface can be used for inserting new entries (ID auto generated in that case)
 interface Subscription {
-  subscriptionId?: number;
+  subscriptionId?: number | string;
   platform: string;
   channelId: string;
   userId: string;
@@ -63,6 +63,12 @@ export const insertChannel = async (channel: Channel) => {
   return db.query('INSERT INTO channels (channel_id, channel_name) VALUES ($1, $2) RETURNING *', [channel.channelId, channel.channelName])
 }
 
+// With many users, channel db conflicts are likely. Upsert is preferred here, as video platforms allow channel name changes. This will allow the channel entries to better reflect name changes on the platform
+export const upsertChannel = async (channel: Channel) => {
+  const db = getDb();
+  return db.query('INSERT INTO channels (channel_id, channel_name) VALUES ($1, $2) ON CONFLICT (channel_id) DO UPDATE SET channel_name = $2 RETURNING *', [channel.channelId, channel.channelName])
+}
+
 export const deleteChannel = async (channelId: string) => {
   const db = getDb();
   return db.query('DELETE FROM channels WHERE channel_id=$1', [channelId])
@@ -79,6 +85,11 @@ export const updateChannel = async (updatedChannel: Channel) => {
 export const selectSubscription = async (subscriptionId: number | string) => {
   const db = getDb();
   return db.query('SELECT * FROM subscriptions WHERE subscription_id=$1', [subscriptionId])
+};
+
+export const selectUserSubscriptions = async (userId: string) => {
+  const db = getDb();
+  return db.query('SELECT * FROM subscriptions WHERE user_id=$1', [userId])
 }
 
 export const insertSubscription = async (subscription: Subscription) => {
@@ -90,9 +101,9 @@ export const insertSubscription = async (subscription: Subscription) => {
   ])
 }
 
-export const deleteSubscription = async (subscriptionId: number) => {
+export const deleteSubscription = async (subscriptionId: number | string) => {
   const db = getDb();
-  return db.query('DELETE FROM subscriptions WHERE subscription_id=$1', [subscriptionId])
+  return db.query('DELETE FROM subscriptions WHERE subscription_id=$1 RETURNING *', [subscriptionId])
 }
 
 export const updateSubscription = async (updatedSubscription: Subscription) => {
