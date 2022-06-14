@@ -9,10 +9,10 @@ router.get('/current', requiresAuth(), getCurrentUser);
 router.route('/:userId')
   .get(requiresAuth(), getUser)
   .delete(requiresAuth(), deleteUser)
-  .patch(updateUser);
+  .patch(requiresAuth(), updateUser);
 
 router.route('/:userId/subscriptions').get(getUserSubscriptions);
-router.route('/:userId/password-change').get(getPasswordChange);
+router.route('/:userId/password-change').get(requiresAuth(), getPasswordChange);
 // router.route('/:userId/email-verification').get(getPasswordChange);
 
 

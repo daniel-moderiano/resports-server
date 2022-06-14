@@ -1,6 +1,7 @@
 import asyncHandler from 'express-async-handler';
 import fetch from 'cross-fetch';
 import { body, validationResult } from 'express-validator';
+import { selectUserSubscriptions } from '../db/helpers';
 
 // @desc    Return the currently logged in user
 // @route   GET /api/users/current
@@ -36,6 +37,7 @@ const getUser = asyncHandler(async (req, res) => {
 // @desc    Update user details
 // @route   PUT /api/users/:userId
 // @access  Private
+// * Does not resend verification email on email address change, but will set email_verified to false automatically
 const updateUser = [
   // Validate input. Only these details are changeable. These are validated by Auth0 as well so this may be redundant. But this does provide an easier way to give useful error messages
   body('email', 'Email is required').trim().isString().isLength({ min: 1 }),
@@ -147,6 +149,8 @@ const getPasswordChange = asyncHandler(async (req, res) => {
 // @route   GET /api/user/:userId/subscriptions
 // @access  Private
 const getUserSubscriptions = asyncHandler(async (req, res) => {
+  const result = await selectUserSubscriptions(req.params.userId);
+  res.json(result.rows);
 });
 
 export {
