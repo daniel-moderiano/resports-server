@@ -1,25 +1,15 @@
 import express from 'express';
+import { getCurrentUser, getUser, updateUser, deleteUser, getUserSubscriptions } from '../controllers/uesrControllers';
 const router = express.Router();
-import asyncHandler from 'express-async-handler'
 
 // Base path /api/users
 
-router.get('/', asyncHandler(async (req, res) => {
-  res.send('User route')
-}));
+router.get('/current', getCurrentUser);
+router.route('/:userId')
+  .get(getUser)
+  .delete(deleteUser)
+  .put(updateUser);
+router.route('/:userId/subscriptions').get(getUserSubscriptions);
 
-router.get('/login', (req, res) => {
-  res.send('Protected login route')
-});
-router.post('/logout', (req, res) => {
-  res.send('Logout route')
-});
-router.post('/register', (req, res) => {
-  res.send('Register route')
-});
-// router.route('/:userId')
-//   .get(protectRoute, getUser)
-//   .delete(protectRoute, deleteUser)
-//   .put(protectRoute, updateUser);
 
 export default router;
