@@ -39,9 +39,28 @@ const updateUser = asyncHandler(async (req, res) => {
 });
 
 // @desc    Delete user
-// @route   DELETE /api/user/:userId
+// @route   DELETE /api/users/:userId
 // @access  Private
 const deleteUser = asyncHandler(async (req, res) => {
+  // Call Auth0 API with appropriate Bearer token
+  const response = await fetch(`${process.env.ISSUER}/api/v2/users/${req.params.userId}`, {
+    method: 'delete',
+    headers: {
+      'Authorization': `Bearer ${process.env.API_KEY}`,
+    },
+  });
+
+  console.log(response);
+
+
+  if (response.status === 204) {    // indicates the user either does not exist, or has been deleted. Treat as success
+    // 204 status indicates no content, hence a 200 is used to attach some feedback
+    res.status(200).json({ message: 'User deleted' });
+  } else {    // Error occurred, handle accordingly
+    const data = await response.json();
+    res.status(data.statusCode);
+    throw new Error(data.message)
+  }
 });
 
 // @desc    Get user subscriptions
