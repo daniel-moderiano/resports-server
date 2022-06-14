@@ -4,7 +4,7 @@ import { Request, Response, NextFunction } from 'express';
 export const addTestUser = (req: Request, res: Response, next: NextFunction) => {
   res.locals.user = {
     // A user ID that reflects the exam format encountered in production env
-    sub: 'google-oauth2|103413235432642364'
+    sub: 'google-oauth2|12345678910'
   };
   next()
 };

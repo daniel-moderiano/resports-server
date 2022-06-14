@@ -42,13 +42,6 @@ const getChannel = asyncHandler(async (req, res) => {
   res.status(200).json(channel);
 });
 
-
-// Specialised function to be called within the addSubscription controller, rathen than it's own route
-const addChannel = async (channel: ChannelInput) => {
-  // Check whether the channel exists in the db before attempting insert
-
-}
-
 export {
   getAllChannels,
   getChannel,

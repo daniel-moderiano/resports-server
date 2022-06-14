@@ -1,5 +1,5 @@
 import asyncHandler from 'express-async-handler';
-import { deleteSubscription, insertSubscription, selectAllFromTable, selectSubscription } from '../db/helpers';
+import { deleteSubscription, insertSubscription, selectAllFromTable, selectSubscription, upsertChannel } from '../db/helpers';
 import { body, validationResult } from 'express-validator'
 
 interface Subscription {
@@ -61,13 +61,19 @@ const addSubscription = [
       res.status(400).json(errors.array());   // Do not throw single error here, pass all validation errors
     } else {
 
-      const newSubscription = await insertSubscription({
+      // First add channel,otherwise the subscription will have no row/table reference
+      await upsertChannel({
+        channelId: req.body.channelId,
+        channelName: req.body.channelId
+      })
+
+      const result = await insertSubscription({
         channelId: req.body.channelId,
         userId: userId,
         platform: req.body.platform
       });
 
-      res.status(200).json(newSubscription);   // Return status OK and new subscription to client
+      res.status(200).json(result.rows[0]);   // Return status OK and new subscription to client
     }
   }),
 ];
