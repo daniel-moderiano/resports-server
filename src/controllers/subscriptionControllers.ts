@@ -1,6 +1,7 @@
 import asyncHandler from 'express-async-handler';
-import { deleteSubscription, insertSubscription, selectAllFromTable, selectSubscription, upsertChannel } from '../db/helpers';
-import { body, validationResult } from 'express-validator'
+import { deleteChannel, deleteSubscription, insertSubscription, selectChannel, selectSubscription, upsertChannel } from '../db/helpers';
+import { body, validationResult } from 'express-validator';
+import getDb from '../db/index'
 
 interface Subscription {
   subscription_id: number;
@@ -95,7 +96,13 @@ const deleteSubscriptionController = asyncHandler(async (req, res) => {
     throw new Error('subscription not found');
   }
 
-  // subscription found in db; return deleted subscription
+  // subscription found in db and deleted. Perform check for any further subs involving this channel
+  const associatedSubs = await getDb().query('SELECT * FROM subscriptions WHERE channel_id=$1', [subscription.channel_id])
+
+  if (associatedSubs.rowCount === 0) {    // We removed the only subscription to that channel; remove the channel
+    await deleteChannel(subscription.channel_id);
+  }
+
   res.status(200).json(result.rows[0]);
 });
 
