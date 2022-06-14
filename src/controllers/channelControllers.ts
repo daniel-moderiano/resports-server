@@ -1,10 +1,17 @@
 import asyncHandler from 'express-async-handler';
 import { selectAllFromTable, selectChannel } from '../db/helpers';
 
-interface Channel {
+interface ChannelResult {
   channel_id: string;
   channel_name: string;
 }
+
+interface ChannelInput {
+  channelId: string;
+  channelName: string;
+}
+
+
 
 // @desc    Get all channels
 // @route   GET /api/channels
@@ -24,7 +31,7 @@ const getChannel = asyncHandler(async (req, res) => {
   const result = await selectChannel(channelId);
 
   // ? Is this typescript addition needlessly complex?
-  const channel: Channel | undefined = result.rows[0];
+  const channel: ChannelResult | undefined = result.rows[0];
 
   if (!channel) {    // channel not found
     res.status(400);
@@ -34,6 +41,13 @@ const getChannel = asyncHandler(async (req, res) => {
   // Channel found in db; return channel details
   res.status(200).json(channel);
 });
+
+
+// Specialised function to be called within the addSubscription controller, rathen than it's own route
+const addChannel = async (channel: ChannelInput) => {
+  // Check whether the channel exists in the db before attempting insert
+
+}
 
 export {
   getAllChannels,

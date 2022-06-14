@@ -37,6 +37,7 @@ const getSubscription = asyncHandler(async (req, res) => {
 const addSubscription = [
   // Validate input
   body('channelId', 'Channel ID is required').trim().isString().isLength({ min: 1 }),
+  body('channelName', 'Channel name is required').trim().isString().isLength({ min: 1 }),
   body('platform', 'Video platform is required').trim().isString().isLength({ min: 1 }),
 
   // Process request after input data has been validated

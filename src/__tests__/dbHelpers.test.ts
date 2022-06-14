@@ -1,4 +1,4 @@
-import { selectAllFromTable, insertUser, selectUser, deleteUser, updateUser, dropTable, insertChannel, selectChannel, updateChannel, deleteChannel, insertSubscription, selectSubscription, updateSubscription, deleteSubscription, selectUserSubscriptions } from "../db/helpers";
+import { selectAllFromTable, insertUser, selectUser, deleteUser, updateUser, dropTable, insertChannel, selectChannel, updateChannel, deleteChannel, insertSubscription, selectSubscription, updateSubscription, deleteSubscription, selectUserSubscriptions, upsertChannel } from "../db/helpers";
 import './dbSetupTeardown';
 
 describe('Database helper/utility functions', () => {
@@ -22,12 +22,22 @@ describe('Database helper/utility functions', () => {
   });
 
   describe('Channels table functions', () => {
-    describe('Add channel to table', () => {
-      it('should insert a channel into the table', async () => {
-        const res = await insertChannel({
+    describe('Upsert channel to table', () => {
+      it('should insert a channel into the table where one does not yet exist', async () => {
+        const res = await upsertChannel({
+          channelId: '123456',
+          channelName: 'BTSSmash'
+        })
+        expect(res.rowCount).toBe(1);
+        expect(res.rows[0]).toStrictEqual({ "channel_id": "123456", "channel_name": "BTSSmash" });
+      });
+
+      it('should update a channel name when one with the same ID exists', async () => {
+        const res = await upsertChannel({
           channelId: '123456',
           channelName: 'VGBootCamp'
         })
+
         expect(res.rowCount).toBe(1);
         expect(res.rows[0]).toStrictEqual({ "channel_id": "123456", "channel_name": "VGBootCamp" });
       })
