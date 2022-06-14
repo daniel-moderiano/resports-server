@@ -123,7 +123,7 @@ const getPasswordChange = asyncHandler(async (req, res) => {
   const passwordChangeOptions = {
     client_id: process.env.CLIENT_ID,
     email: userData.email,
-    connection: userData.identities[0].connection
+    // connection: userData.identities[0].connection
   }
 
   // Make POST request with user data
@@ -150,26 +150,10 @@ const getPasswordChange = asyncHandler(async (req, res) => {
 // @route   GET /api/users/:userId/email-verification
 // @access  Private
 const getEmailVerification = asyncHandler(async (req, res) => {
-  // First fetch all user details (specifically to access connection type)
-  const getUserResponse = await fetch(`${process.env.ISSUER}/api/v2/users/${req.params.userId}`, {
-    method: 'get',
-    headers: {
-      'Authorization': `Bearer ${process.env.API_KEY}`,
-    },
-  });
-
-  const userData = await getUserResponse.json();
-
-  if (userData.error) {   // successful fetch, but either bad request or user does not exist. Throw error
-    res.status(userData.statusCode);
-    throw new Error(userData.message)
-  }
-
   // User data successfully fetched - now able to construct POST request to send email verification
   const emailVerifyOptions = {
-    user_id: userData.user_id,
+    user_id: req.params.userId,
     client_id: process.env.CLIENT_ID,
-    // identity: userData.identities[0],
   }
 
   // Make POST request with user data
@@ -189,7 +173,7 @@ const getEmailVerification = asyncHandler(async (req, res) => {
     throw new Error(emailResponseData.message)
   }
 
-  res.json({ message: 'Password reset email sent' })
+  res.json({ message: 'Email verification link sent' })
 });
 
 // @desc    Get user subscriptions
