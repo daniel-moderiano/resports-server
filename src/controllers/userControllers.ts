@@ -7,7 +7,7 @@ import fetch from 'cross-fetch';
 const getCurrentUser = asyncHandler(async (req, res) => {
   // As a protected route, this function will always have access to req.oidc.user
   const userData = req.oidc.user;
-  res.json(userData);
+  res.status(200).json(userData);
 });
 
 
@@ -23,8 +23,13 @@ const getUser = asyncHandler(async (req, res) => {
     },
   });
   const data = await response.json();
-  // * This does not expose sensitive data (i.e. password)
-  res.json(data);
+
+  if (data.error) {   // successful fetch, but either bad request or user does not exist. Throw error
+    res.status(data.statusCode);
+    throw new Error(data.message)
+  }
+
+  res.status(200).json(data);
 });
 
 // @desc    Update user details
