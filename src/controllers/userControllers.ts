@@ -37,7 +37,7 @@ const getUser = asyncHandler(async (req, res) => {
 // @desc    Update user details
 // @route   PUT /api/users/:userId
 // @access  Private
-// * Does not resend verification email on email address change, but will set email_verified to false automatically
+// * Does not resend verification email on email address change, but will set email_verified to false automatically. Consider manually adding automatic verification link resending if email is changed?
 const updateUser = [
   // Validate input. Only these details are changeable. These are validated by Auth0 as well so this may be redundant. But this does provide an easier way to give useful error messages
   body('email', 'Email is required').trim().isString().isLength({ min: 1 }),
@@ -52,6 +52,9 @@ const updateUser = [
     if (!errors.isEmpty()) {
       res.status(400).json(errors.array());   // Do not throw single error here, pass all validation errors
     } else {
+      // Determine if the user is attempting to change their email address
+      const emailChanged = req.oidc.user!.email !== req.body.email;
+
       const updateDetails = {
         email: req.body.email,
         nickname: req.body.nickname
@@ -72,6 +75,23 @@ const updateUser = [
         res.status(data.statusCode);
         throw new Error(data.message)
       }
+
+      // After successful update, resend email verification link if email has been changed
+      if (emailChanged) {
+        // * Do not bother with error handling here. The update operation has succeeded; this is a side effect only
+        await fetch(`${process.env.ISSUER}/api/v2/jobs/verification-email`, {
+          method: 'post',
+          headers: {
+            'Authorization': `Bearer ${process.env.API_KEY}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            user_id: req.params.userId,
+            client_id: process.env.CLIENT_ID,
+          }),
+        });
+      }
+
       res.status(200).json(data);
     }
   }),
@@ -123,7 +143,7 @@ const getPasswordChange = asyncHandler(async (req, res) => {
   const passwordChangeOptions = {
     client_id: process.env.CLIENT_ID,
     email: userData.email,
-    // connection: userData.identities[0].connection
+    connection: userData.identities[0].connection
   }
 
   // Make POST request with user data
@@ -131,10 +151,13 @@ const getPasswordChange = asyncHandler(async (req, res) => {
     method: 'post',
     headers: {
       'Authorization': `Bearer ${process.env.API_KEY}`,
-      // 'Content-Type': 'application/json'
+      'Content-Type': 'application/json'
     },
     body: JSON.stringify(passwordChangeOptions),
   });
+
+  console.log(passwordChangeResponse);
+
 
   if (passwordChangeResponse.status !== 200) {    // Issue with email passowrd reset request
     const errorData = await passwordChangeResponse.json();

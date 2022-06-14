@@ -11,9 +11,9 @@ router.route('/:userId')
   .delete(requiresAuth(), deleteUser)
   .patch(requiresAuth(), updateUser);
 
-router.route('/:userId/subscriptions').get(getUserSubscriptions);
+router.route('/:userId/subscriptions').get(requiresAuth(), getUserSubscriptions);
 router.route('/:userId/password-change').get(requiresAuth(), getPasswordChange);
-router.route('/:userId/email-verification').get(getEmailVerification);
+router.route('/:userId/email-verification').get(requiresAuth(), getEmailVerification);
 
 
 export default router;
