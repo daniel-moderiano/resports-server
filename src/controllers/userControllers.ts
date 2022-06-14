@@ -145,6 +145,53 @@ const getPasswordChange = asyncHandler(async (req, res) => {
   res.json({ message: 'Password reset email sent' })
 });
 
+
+// @desc    Resend a verification email to the user
+// @route   GET /api/users/:userId/email-verification
+// @access  Private
+const getEmailVerification = asyncHandler(async (req, res) => {
+  // First fetch all user details (specifically to access connection type)
+  const getUserResponse = await fetch(`${process.env.ISSUER}/api/v2/users/${req.params.userId}`, {
+    method: 'get',
+    headers: {
+      'Authorization': `Bearer ${process.env.API_KEY}`,
+    },
+  });
+
+  const userData = await getUserResponse.json();
+
+  if (userData.error) {   // successful fetch, but either bad request or user does not exist. Throw error
+    res.status(userData.statusCode);
+    throw new Error(userData.message)
+  }
+
+  // User data successfully fetched - now able to construct POST request to send email verification
+  const emailVerifyOptions = {
+    user_id: userData.user_id,
+    client_id: process.env.CLIENT_ID,
+    // identity: userData.identities[0],
+  }
+
+  // Make POST request with user data
+  const emailVerifyResponse = await fetch(`${process.env.ISSUER}/api/v2/jobs/verification-email`, {
+    method: 'post',
+    headers: {
+      'Authorization': `Bearer ${process.env.API_KEY}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(emailVerifyOptions),
+  });
+
+  const emailResponseData = await emailVerifyResponse.json()
+
+  if (emailResponseData.error) {   // successful fetch, but either bad request or user does not exist. Throw error
+    res.status(emailResponseData.statusCode);
+    throw new Error(emailResponseData.message)
+  }
+
+  res.json({ message: 'Password reset email sent' })
+});
+
 // @desc    Get user subscriptions
 // @route   GET /api/user/:userId/subscriptions
 // @access  Private
@@ -159,5 +206,6 @@ export {
   updateUser,
   deleteUser,
   getUserSubscriptions,
-  getPasswordChange
+  getPasswordChange,
+  getEmailVerification
 }
