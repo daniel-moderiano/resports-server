@@ -1,5 +1,5 @@
 import express from 'express';
-import { getCurrentUser, getUser, updateUser, deleteUser, getUserSubscriptions } from '../controllers/uesrControllers';
+import { getCurrentUser, getUser, updateUser, deleteUser, getUserSubscriptions } from '../controllers/userControllers';
 const router = express.Router();
 
 // Base path /api/users

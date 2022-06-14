@@ -1,4 +1,5 @@
 import asyncHandler from 'express-async-handler';
+import fetch from 'cross-fetch';
 
 // @desc    Return the currently logged in user
 // @route   GET /api/users/current
@@ -11,6 +12,17 @@ const getCurrentUser = asyncHandler(async (req, res) => {
 // @route   GET /api/users/:userId
 // @access  Private
 const getUser = asyncHandler(async (req, res) => {
+  const response = await fetch(`${process.env.ISSUER}/api/v2/users`, {
+    method: 'get',
+    headers: {
+      'Authorization': `Bearer ${process.env.API_KEY}`,
+    },
+  });
+  const data = await response.json();
+  console.log(data);
+
+
+  res.send('body');
 });
 
 // @desc    Update user details

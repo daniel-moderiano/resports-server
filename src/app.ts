@@ -6,6 +6,7 @@ import 'dotenv/config';
 import { config } from './config/auth0';
 import { auth, requiresAuth } from 'express-openid-connect';
 import { errorHandler } from './middleware/errorMiddleware';
+import userRoutes from './routes/userRoutes';
 
 process.env.TEST_ENV = 'false';
 
@@ -50,7 +51,7 @@ app.get('/admin', requiresAuth(), (req, res) => {
 });
 
 // Use routes
-// app.use('/api/users', userRoutes);
+app.use('/api/users', userRoutes);
 app.use('/api/channels', channelRoutes);
 app.use('/api/subscriptions', subscriptionRoutes);
 
