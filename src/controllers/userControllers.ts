@@ -1,5 +1,6 @@
 import asyncHandler from 'express-async-handler';
 import fetch from 'cross-fetch';
+import { body, validationResult } from 'express-validator';
 
 // @desc    Return the currently logged in user
 // @route   GET /api/users/current
@@ -35,30 +36,44 @@ const getUser = asyncHandler(async (req, res) => {
 // @desc    Update user details
 // @route   PUT /api/users/:userId
 // @access  Private
-const updateUser = asyncHandler(async (req, res) => {
-  // Allowed details to change include email, password, and nickname
-  const userUpdateDetails = {
+const updateUser = [
+  // Validate input. Only these details are changeable. These are validated by Auth0 as well so this may be redundant. But this does provide an easier way to give useful error messages
+  body('email', 'Email is required').trim().isString().isLength({ min: 1 }),
+  body('nickname', 'Nickname is required').trim().isString().isLength({ min: 1 }),
 
-  }
-  // Call Auth0 API with appropriate Bearer token
-  const response = await fetch(`${process.env.ISSUER}/api/v2/users/${req.params.userId}`, {
-    method: 'patch',
-    headers: {
-      'Authorization': `Bearer ${process.env.API_KEY}`,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(userUpdateDetails)
-  });
+  // Process request after input data has been validated
+  asyncHandler(async (req, res, next) => {
+    // Extract the validation errors from a request
+    const errors = validationResult(req);
 
-  const data = await response.json();
+    // Validation errors have occurred. Return these to the user
+    if (!errors.isEmpty()) {
+      res.status(400).json(errors.array());   // Do not throw single error here, pass all validation errors
+    } else {
+      const updateDetails = {
+        email: req.body.email,
+        nickname: req.body.nickname
+      }
+      // Call Auth0 API with appropriate Bearer token
+      const response = await fetch(`${process.env.ISSUER}/api/v2/users/${req.params.userId}`, {
+        method: 'patch',
+        headers: {
+          'Authorization': `Bearer ${process.env.API_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(updateDetails)
+      });
 
-  if (data.error) {   // successful fetch, but either bad request or user does not exist. Throw error
-    res.status(data.statusCode);
-    throw new Error(data.message)
-  }
+      const data = await response.json();
 
-  res.status(200).json(data);
-});
+      if (data.error) {   // successful fetch, but either bad request or user does not exist. Throw error
+        res.status(data.statusCode);
+        throw new Error(data.message)
+      }
+      res.status(200).json(data);
+    }
+  }),
+];
 
 // @desc    Delete user
 // @route   DELETE /api/users/:userId

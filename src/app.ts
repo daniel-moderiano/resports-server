@@ -12,6 +12,9 @@ process.env.TEST_ENV = 'false';
 
 const app: Application = express();
 
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+
 // auth router attaches /login, /logout, and /callback routes to the baseURL
 // * Although the form_post notification appears, requests should still be able to be sent fine with HTTP. If issues occur, run the npm https script
 app.use(auth(config));
