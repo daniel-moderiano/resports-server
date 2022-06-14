@@ -12,7 +12,8 @@ const getCurrentUser = asyncHandler(async (req, res) => {
 // @route   GET /api/users/:userId
 // @access  Private
 const getUser = asyncHandler(async (req, res) => {
-  const response = await fetch(`${process.env.ISSUER}/api/v2/users`, {
+  // As a protected route, this controller will always have access to req.oidc.user
+  const response = await fetch(`${process.env.ISSUER}/api/v2/users/${req.params.userId}`, {
     method: 'get',
     headers: {
       'Authorization': `Bearer ${process.env.API_KEY}`,
