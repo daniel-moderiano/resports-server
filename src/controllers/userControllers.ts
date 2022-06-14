@@ -5,6 +5,9 @@ import fetch from 'cross-fetch';
 // @route   GET /api/users/current
 // @access  Private
 const getCurrentUser = asyncHandler(async (req, res) => {
+  // As a protected route, this function will always have access to req.oidc.user
+  const userData = req.oidc.user;
+  res.json(userData);
 });
 
 
@@ -12,7 +15,7 @@ const getCurrentUser = asyncHandler(async (req, res) => {
 // @route   GET /api/users/:userId
 // @access  Private
 const getUser = asyncHandler(async (req, res) => {
-  // As a protected route, this controller will always have access to req.oidc.user
+  // Call Auth0 API with appropriate Bearer token
   const response = await fetch(`${process.env.ISSUER}/api/v2/users/${req.params.userId}`, {
     method: 'get',
     headers: {
@@ -20,10 +23,8 @@ const getUser = asyncHandler(async (req, res) => {
     },
   });
   const data = await response.json();
-  console.log(data);
-
-
-  res.send('body');
+  // * This does not expose sensitive data (i.e. password)
+  res.json(data);
 });
 
 // @desc    Update user details
