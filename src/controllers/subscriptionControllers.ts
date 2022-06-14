@@ -14,16 +14,6 @@ interface Subscription {
 // @route   GET /api/subscriptions/subscriptionId
 // @access  Private
 const getSubscription = asyncHandler(async (req, res) => {
-  let userId: string | undefined;
-
-  // For testing purposes, use the res.locals object, which can be changed to suit testing needs
-  if (process.env.TEST_ENV === 'true') {
-    userId = res.locals.user!.sub.split('|')[1] as string
-    console.log('Testing', userId);
-  } else {
-    userId = req.oidc.user!.sub.split('|')[1] as string;
-  }
-
   // subscription ID grabbed from URL params
   const subscriptionId = req.params.subscriptionId;
   const result = await selectSubscription(subscriptionId);
@@ -58,7 +48,6 @@ const addSubscription = [
     // For testing purposes, use the res.locals object, which can be changed to suit testing needs
     if (process.env.TEST_ENV === 'true') {
       userId = res.locals.user!.sub.split('|')[1] as string
-      console.log('Testing', userId);
     } else {
       userId = req.oidc.user!.sub.split('|')[1] as string;
     }
