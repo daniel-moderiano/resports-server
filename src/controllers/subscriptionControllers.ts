@@ -49,9 +49,9 @@ const addSubscription = [
 
     // For testing purposes, use the res.locals object, which can be changed to suit testing needs
     if (process.env.TEST_ENV === 'true') {
-      userId = res.locals.user!.sub.split('|')[1] as string
+      userId = res.locals.user!.sub as string;
     } else {
-      userId = req.oidc.user!.sub.split('|')[1] as string;
+      userId = req.oidc.user!.sub as string;
     }
 
     // Extract the validation errors from a request

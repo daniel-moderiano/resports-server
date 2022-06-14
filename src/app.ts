@@ -6,10 +6,14 @@ import 'dotenv/config';
 import { config } from './config/auth0';
 import { auth, requiresAuth } from 'express-openid-connect';
 import { errorHandler } from './middleware/errorMiddleware';
+import userRoutes from './routes/userRoutes';
 
 process.env.TEST_ENV = 'false';
 
 const app: Application = express();
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
 // auth router attaches /login, /logout, and /callback routes to the baseURL
 // * Although the form_post notification appears, requests should still be able to be sent fine with HTTP. If issues occur, run the npm https script
@@ -50,7 +54,7 @@ app.get('/admin', requiresAuth(), (req, res) => {
 });
 
 // Use routes
-// app.use('/api/users', userRoutes);
+app.use('/api/users', userRoutes);
 app.use('/api/channels', channelRoutes);
 app.use('/api/subscriptions', subscriptionRoutes);
 
