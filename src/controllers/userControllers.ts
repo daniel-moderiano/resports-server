@@ -36,6 +36,28 @@ const getUser = asyncHandler(async (req, res) => {
 // @route   PUT /api/users/:userId
 // @access  Private
 const updateUser = asyncHandler(async (req, res) => {
+  // Allowed details to change include email, password, and nickname
+  const userUpdateDetails = {
+
+  }
+  // Call Auth0 API with appropriate Bearer token
+  const response = await fetch(`${process.env.ISSUER}/api/v2/users/${req.params.userId}`, {
+    method: 'patch',
+    headers: {
+      'Authorization': `Bearer ${process.env.API_KEY}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(userUpdateDetails)
+  });
+
+  const data = await response.json();
+
+  if (data.error) {   // successful fetch, but either bad request or user does not exist. Throw error
+    res.status(data.statusCode);
+    throw new Error(data.message)
+  }
+
+  res.status(200).json(data);
 });
 
 // @desc    Delete user
@@ -50,9 +72,6 @@ const deleteUser = asyncHandler(async (req, res) => {
     },
   });
 
-  console.log(response);
-
-
   if (response.status === 204) {    // indicates the user either does not exist, or has been deleted. Treat as success
     // 204 status indicates no content, hence a 200 is used to attach some feedback
     res.status(200).json({ message: 'User deleted' });
@@ -61,6 +80,52 @@ const deleteUser = asyncHandler(async (req, res) => {
     res.status(data.statusCode);
     throw new Error(data.message)
   }
+});
+
+
+// @desc    Enable a user to change their password
+// @route   GET /api/users/:userId/password-change
+// @access  Private
+const getPasswordChange = asyncHandler(async (req, res) => {
+  // First fetch all user details (specifically to access connection type)
+  const getUserResponse = await fetch(`${process.env.ISSUER}/api/v2/users/${req.params.userId}`, {
+    method: 'get',
+    headers: {
+      'Authorization': `Bearer ${process.env.API_KEY}`,
+    },
+  });
+
+  const userData = await getUserResponse.json();
+
+  if (userData.error) {   // successful fetch, but either bad request or user does not exist. Throw error
+    res.status(userData.statusCode);
+    throw new Error(userData.message)
+  }
+
+  // User data successfully fetched - now able to construct POST request to change password
+  const passwordChangeOptions = {
+    client_id: process.env.CLIENT_ID,
+    email: userData.email,
+    connection: userData.identities[0].connection
+  }
+
+  // Make POST request with user data
+  const passwordChangeResponse = await fetch(`${process.env.ISSUER}/dbconnections/change_password`, {
+    method: 'post',
+    headers: {
+      'Authorization': `Bearer ${process.env.API_KEY}`,
+      // 'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(passwordChangeOptions),
+  });
+
+  if (passwordChangeResponse.status !== 200) {    // Issue with email passowrd reset request
+    const errorData = await passwordChangeResponse.json();
+    res.status(passwordChangeResponse.status);
+    throw new Error(errorData.error);
+  }
+
+  res.json({ message: 'Password reset email sent' })
 });
 
 // @desc    Get user subscriptions
@@ -74,5 +139,6 @@ export {
   getUser,
   updateUser,
   deleteUser,
-  getUserSubscriptions
+  getUserSubscriptions,
+  getPasswordChange
 }

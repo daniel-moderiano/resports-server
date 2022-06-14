@@ -34,3 +34,5 @@ Features required
 Not required
  - Update a subscription
  - Get all subscriptions on the platform
+
+Consider testing routes by mocking controllers and checking they are called?
