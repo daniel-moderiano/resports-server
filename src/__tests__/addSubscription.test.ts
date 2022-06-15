@@ -3,7 +3,6 @@ import request from 'supertest';
 import express from 'express';
 import './dbSetupTeardown';
 import { addTestUser } from '../middleware/testUserMiddleware';
-import { selectAllFromTable } from '../db/generalHelpers'
 
 // * User ID will only be accessible in a test environment within this controller
 process.env.TEST_ENV === 'true';

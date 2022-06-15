@@ -34,9 +34,8 @@ const addSubscription = [
 
   // Process request after input data has been validated
   asyncHandler(async (req, res, next) => {
-    // Because this route is protected, this controller will not be reached unless the user is authenticated. Therefore, we will always have access too res.oidc.user at this point. A conditional check is redundant here.
-    // Isolate the ID portion from the authentication type (e.g. auth0|1234 -> 1234)
-    let userId: undefined | string;
+    // Because this route is protected, this controller will not be reached unless the user is authenticated. Therefore, we will always have access too res.oidc.user at this point. A conditional check may be redundant here.
+    let userId: string;
 
     // For testing purposes, use the res.locals object, which can be changed to suit testing needs
     if (process.env.TEST_ENV === 'true') {
@@ -65,7 +64,10 @@ const addSubscription = [
         platform: req.body.platform
       });
 
-      res.status(200).json(result.rows[0]);   // Return status OK and new subscription to client
+      // It is safe to assign directly to SubscriptionDbResult here, as any failure in insert would throw error rather then leave row[0] undefined
+      const newSubscription: SubscriptionDbResult = result.rows[0];
+
+      res.status(200).json(newSubscription);
     }
   }),
 ];
