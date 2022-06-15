@@ -75,9 +75,8 @@ const addSubscription = [
 // @access  Private
 // * Named with 'Controller' suffix to distinguish from database helper function with the same name
 const deleteSubscriptionController = asyncHandler(async (req, res) => {
-
+  // Attempt delete operation on specified subscription, and extract details of deleted subscription
   const result = await deleteSubscription(req.params.subscriptionId);
-
   const deletedSubscription: SubscriptionDbResult | undefined = result.rows[0];
 
   if (!deletedSubscription) {    // subscription not found
@@ -85,7 +84,7 @@ const deleteSubscriptionController = asyncHandler(async (req, res) => {
     throw new Error('subscription not found');
   }
 
-  // subscription found in db and deleted. Perform check for any further subs involving this channel
+  // subscription found in db and deleted. Check for any additional or 'associated' subscriptions for the same channel
   const associatedSubscriptions = await getDb().query('SELECT * FROM subscriptions WHERE channel_id=$1', [deletedSubscription.channel_id])
 
   if (associatedSubscriptions.rowCount === 0) {    // We removed the only subscription to that channel; remove the channel
