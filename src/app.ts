@@ -47,13 +47,6 @@ app.get('/sign-up', (req, res) => {
   });
 });
 
-// Test protected route
-app.get('/admin', requiresAuth(), (req, res) => {
-  console.log(req.oidc.isAuthenticated(), req.oidc.user);
-
-  res.send('This is a protected route')
-});
-
 // Use routes
 app.use('/api/users', userRoutes);
 app.use('/api/channels', channelRoutes);

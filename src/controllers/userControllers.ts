@@ -2,12 +2,18 @@ import asyncHandler from 'express-async-handler';
 import fetch from 'cross-fetch';
 import { body, validationResult } from 'express-validator';
 import { selectUserSubscriptions } from '../db/helpers';
+import { RequestOIDCUser } from '../types/APITypes';
 
 // @desc    Return the currently logged in user
 // @route   GET /api/users/current
 // @access  Private
 const getCurrentUser = asyncHandler(async (req, res) => {
-  // As a protected route, this function will always have access to req.oidc.user
+  // As a protected route, this function should always have access to req.oidc.user, but this check confirms it
+  if (!req.oidc.user) {
+    res.status(500)
+    throw new Error('An error occurred while fetching user data')
+  }
+
   const userData = req.oidc.user;
   res.status(200).json(userData);
 });
@@ -52,8 +58,16 @@ const updateUser = [
     if (!errors.isEmpty()) {
       res.status(400).json(errors.array());   // Do not throw single error here, pass all validation errors
     } else {
+      // As a protected route, this function should always have access to req.oidc.user
+      if (!req.oidc.user) {
+        res.status(500)
+        throw new Error('An error occurred while fetching user data')
+      }
+
+      const currentUserData = req.oidc.user as RequestOIDCUser;
+
       // Determine if the user is attempting to change their email address
-      const emailChanged = req.oidc.user!.email !== req.body.email;
+      const emailChanged = currentUserData.email !== req.body.email;
 
       const updateDetails = {
         email: req.body.email,
