@@ -1,17 +1,7 @@
 import asyncHandler from 'express-async-handler';
-import { selectAllFromTable, selectChannel } from '../db/helpers';
-
-interface ChannelResult {
-  channel_id: string;
-  channel_name: string;
-}
-
-interface ChannelInput {
-  channelId: string;
-  channelName: string;
-}
-
-
+import { selectAllFromTable } from '../db/generalHelpers';
+import { selectChannel } from '../db/channelHelpers';
+import { ChannelDbResult } from '../types/databaseTypes';
 
 // @desc    Get all channels
 // @route   GET /api/channels
@@ -26,12 +16,9 @@ const getAllChannels = asyncHandler(async (req, res) => {
 // @route   GET /api/channels/channelId
 // @access  Private
 const getChannel = asyncHandler(async (req, res) => {
-  // Channel ID grabbed from URL params
-  const channelId = req.params.channelId;
-  const result = await selectChannel(channelId);
-
-  // ? Is this typescript addition needlessly complex?
-  const channel: ChannelResult | undefined = result.rows[0];
+  // Select specified channel from database, and extract the information
+  const result = await selectChannel(req.params.channelId);
+  const channel: ChannelDbResult | undefined = result.rows[0];
 
   if (!channel) {    // channel not found
     res.status(400);

@@ -2,7 +2,7 @@ import { getChannel } from '../controllers/channelControllers';
 import request from 'supertest';
 import express from 'express';
 import './dbSetupTeardown';
-import { deleteChannel, insertChannel } from '../db/helpers';
+import { deleteChannel, insertChannel } from '../db/channelHelpers';
 
 // Setup new app instance
 const app = express();
@@ -21,7 +21,6 @@ describe('getChannel controller', () => {
     const res = await request(app).get('/channels/1234');
     expect(res.headers['content-type']).toMatch(/json/);
     expect(res.statusCode).toEqual(200);
-    // There are two channels in the database
     expect(res.body).toStrictEqual({ channel_id: '1234', channel_name: 'VGBootCamp' });
   });
 
