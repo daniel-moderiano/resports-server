@@ -2,7 +2,8 @@ import { getSubscription } from '../controllers/subscriptionControllers';
 import request from 'supertest';
 import express from 'express';
 import './dbSetupTeardown';
-import { insertChannel, insertSubscription, deleteSubscription } from '../db/helpers';
+import { insertSubscription, deleteSubscription } from '../db/subscriptionHelpers';
+import { insertChannel } from '../db/channelHelpers';
 
 // Setup new app instance
 const app = express();
@@ -32,7 +33,6 @@ describe('getSubscription controller', () => {
     const res = await request(app).get('/subscriptions/2');
     expect(res.headers['content-type']).toMatch(/json/);
     expect(res.statusCode).toEqual(200);
-    // There are two channels in the database
     expect(res.body).toStrictEqual({ subscription_id: 2, channel_id: '5678', user_id: '1234', platform: 'twitch' });
   });
 
