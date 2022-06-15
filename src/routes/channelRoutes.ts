@@ -1,7 +1,8 @@
 import express from 'express';
-const router = express.Router();
 import { getAllChannels, getChannel } from '../controllers/channelControllers'
 import { requiresAuth } from 'express-openid-connect';
+
+const router = express.Router();
 
 // Base path /api/channels
 

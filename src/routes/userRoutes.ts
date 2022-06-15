@@ -1,6 +1,7 @@
 import express from 'express';
 import { requiresAuth } from 'express-openid-connect';
 import { getCurrentUser, getUser, updateUser, deleteUser, getUserSubscriptions, getPasswordChange, getEmailVerification } from '../controllers/userControllers';
+
 const router = express.Router();
 
 // Base path /api/users

@@ -28,13 +28,14 @@ app.use(auth(config));
 // req.isAuthenticated is provided from the auth router
 app.get('/', (req, res) => {
   if (req.oidc.isAuthenticated() && req.oidc.user) {
-    // console.log(`User ID: ${req.oidc.user.sub.split('|')[1]}`);
+    console.log(req.oidc.user);
 
     res.send('Logged in')
   } else {
     res.send('Unauthorised, please log in')
   }
 });
+
 
 // Ensure a returnTo URL is provided to avoid infinite loops in redirects
 app.get('/sign-up', (req, res) => {
