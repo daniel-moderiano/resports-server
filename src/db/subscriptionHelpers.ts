@@ -1,12 +1,5 @@
 import getDb from ".";
-
-// SubscriptionId is optional so this interface can be used for inserting new entries (ID auto generated in that case)
-interface Subscription {
-  subscriptionId?: number | string;
-  platform: string;
-  channelId: string;
-  userId: string;
-}
+import { Subscription } from "../types/databaseTypes";
 
 // SUBSCRIPTIONS TABLE FUNCTIONS
 // Although in the database the ID is a numeric type, subscription ID will frequently be in the form of a string elsewhere. Whether the query is made using string or int input does not change the outcome, hence both types are accepted

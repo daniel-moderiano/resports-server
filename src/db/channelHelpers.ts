@@ -1,10 +1,5 @@
 import getDb from ".";
-
-interface Channel {
-  channelId: string;
-  channelName: string;
-}
-
+import { Channel } from "../types/databaseTypes";
 
 // CHANNELS TABLE FUNCTIONS
 export const selectChannel = async (channelId: string) => {
