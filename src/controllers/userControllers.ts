@@ -42,6 +42,7 @@ const getUser = asyncHandler(async (req, res) => {
   res.status(200).json(user);
 });
 
+
 // @desc    Update user details
 // @route   PUT /api/users/:userId
 // @access  Private
@@ -60,15 +61,12 @@ const updateUser = [
       res.status(400).json(errors.array());   // Do not throw single error here, pass all validation errors
     }
 
+    // Validation has passed, continue with user update
     const currentUserData = req.oidc.user as RequestOIDCUser;
 
-    // Determine if the user is attempting to change their email address
+    // This check is performed in order to determine if a new email verification link is required
     const emailChanged = currentUserData.email !== req.body.email;
 
-    const updateDetails = {
-      email: req.body.email,
-      nickname: req.body.nickname
-    }
     // Call Auth0 API with appropriate Bearer token
     const response = await fetch(`${process.env.ISSUER}/api/v2/users/${req.params.userId}`, {
       method: 'patch',
@@ -76,19 +74,24 @@ const updateUser = [
         'Authorization': `Bearer ${res.locals.apiToken}`,
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(updateDetails)
+      body: JSON.stringify({
+        email: req.body.email,
+        nickname: req.body.nickname
+      })
     });
 
-    const data = await response.json();
-
-    if (data.error) {   // successful fetch, but either bad request or user does not exist. Throw error
-      res.status(data.statusCode);
-      throw new Error(data.message)
+    if (response.status !== 200) {    // error occurred with API request
+      const error: Auth0ApiError = await response.json();
+      res.status(error.statusCode);
+      throw new Error(error.message)
     }
+
+    // Successful fetch response
+    const updatedUser: Auth0User = await response.json();
 
     // After successful update, resend email verification link if email has been changed
     if (emailChanged) {
-      // * Do not bother with error handling here. The update operation has succeeded; this is a side effect only
+      // * Do not bother with error handling here. The update operation has succeeded; this is a side effect only.
       await fetch(`${process.env.ISSUER}/api/v2/jobs/verification-email`, {
         method: 'post',
         headers: {
@@ -102,10 +105,10 @@ const updateUser = [
       });
     }
 
-    res.status(200).json(data);
-
+    res.status(200).json(updatedUser);
   }),
 ];
+
 
 // @desc    Delete user
 // @route   DELETE /api/users/:userId
@@ -203,6 +206,7 @@ const getEmailVerification = asyncHandler(async (req, res) => {
   res.json({ message: 'Email verification link sent' })
 });
 
+
 // @desc    Get user subscriptions
 // @route   GET /api/user/:userId/subscriptions
 // @access  Private
@@ -210,6 +214,7 @@ const getUserSubscriptions = asyncHandler(async (req, res) => {
   const result = await selectUserSubscriptions(req.params.userId);
   res.json(result.rows);
 });
+
 
 export {
   getCurrentUser,

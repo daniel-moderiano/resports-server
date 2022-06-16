@@ -7,8 +7,7 @@ import { config } from './config/auth0';
 import { auth } from 'express-openid-connect';
 import { errorHandler } from './middleware/errorMiddleware';
 import userRoutes from './routes/userRoutes';
-
-process.env.TEST_ENV = 'false';
+import { signupController } from './controllers/signupController';
 
 const app: Application = express();
 
@@ -16,34 +15,18 @@ const app: Application = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-// auth router attaches /login, /logout, and /callback routes to the baseURL
-// * Although the form_post notification appears, requests should still be able to be sent fine with HTTP. If issues occur, run the npm https script
-app.use(auth(config));
-
+// Establish database 
 (async () => {
   const db = getDb();
   await db.connect();
   console.log('Postgres connected');
 })();
 
-// req.isAuthenticated is provided from the auth router
-app.get('/', (req, res) => {
-  if (req.oidc.isAuthenticated() && req.oidc.user) {
-    res.send('Logged in')
-  } else {
-    res.send('Unauthorised, please log in')
-  }
-});
-
-// Ensure a returnTo URL is provided to avoid infinite loops in redirects
-app.get('/sign-up', (req, res) => {
-  res.oidc.login({
-    authorizationParams: {
-      screen_hint: 'signup',
-    },
-    returnTo: 'http://localhost:5000'
-  });
-});
+// * Although the form_post warning appears, requests should still be able to be sent fine with HTTP. If issues occur, run the npm https script
+// auth router attaches /login, /logout, and /callback routes to the baseURL.
+// Sign-up route is manually attached
+app.use(auth(config));
+app.get('/sign-up', signupController)
 
 // Use routes
 app.use('/api/users', userRoutes);
