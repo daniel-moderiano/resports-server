@@ -125,15 +125,16 @@ const deleteUser = asyncHandler(async (req, res) => {
     },
   });
 
-  if (response.status === 204) {    // indicates the user either does not exist, or has been deleted. Treat as success
-    // 204 status indicates no content, hence a 200 is used to attach some feedback
-    res.status(200).json({ message: 'User deleted' });
-  } else {    // Error occurred, handle accordingly
-    const data = await response.json();
-    res.status(data.statusCode);
-    throw new Error(data.message)
+  if (response.status !== 204) {    // error occurred with API request
+    const error: Auth0ApiError = await response.json();
+    res.status(error.statusCode);
+    throw new Error(error.message)
   }
+
+  // 204 status is returned when the user either does not exist, or has been deleted. Both are considered and handled the same way here. However, 204 status also indicates no content, hence a 200 is used to attach some feedback
+  res.status(200).json({ message: 'User deleted' });
 });
+
 
 
 // @desc    Enable a user to change their password
