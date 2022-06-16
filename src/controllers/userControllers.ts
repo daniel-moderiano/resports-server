@@ -148,39 +148,36 @@ const getPasswordChange = asyncHandler(async (req, res) => {
     },
   });
 
-  const userData = await getUserResponse.json();
-
-  if (userData.error) {   // successful fetch, but either bad request or user does not exist. Throw error
-    res.status(userData.statusCode);
-    throw new Error(userData.message)
+  if (getUserResponse.status !== 200) {    // error occurred with API request
+    const error: Auth0ApiError = await getUserResponse.json();
+    res.status(error.statusCode);
+    throw new Error(error.message)
   }
 
-  // User data successfully fetched - now able to construct POST request to change password
-  const passwordChangeOptions = {
-    client_id: process.env.CLIENT_ID,
-    email: userData.email,
-    connection: userData.identities[0].connection
-  }
+  // Successful fetch response
+  const userData: Auth0User = await getUserResponse.json();
 
-  // Make POST request with user data
+  // With user data we are now able to construct POST request to change password
   const passwordChangeResponse = await fetch(`${process.env.ISSUER}/dbconnections/change_password`, {
     method: 'post',
     headers: {
       'Authorization': `Bearer ${res.locals.apiToken}`,
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify(passwordChangeOptions),
+    body: JSON.stringify({
+      client_id: process.env.CLIENT_ID,
+      email: userData.email,
+      connection: userData.identities[0].connection
+    }),
   });
 
-  console.log(passwordChangeResponse);
-
-
   if (passwordChangeResponse.status !== 200) {    // Issue with email passowrd reset request
-    const errorData = await passwordChangeResponse.json();
+    const errorData: { error: string; } = await passwordChangeResponse.json();
     res.status(passwordChangeResponse.status);
     throw new Error(errorData.error);
   }
 
+  // Successful request, inform user with a simple message
   res.json({ message: 'Password reset email sent' })
 });
 
