@@ -24,7 +24,7 @@ describe('addTestUser middleware', () => {
 
     expect(res.headers['content-type']).toMatch(/json/);
     expect(res.statusCode).toEqual(200);
-    expect(res.body).toStrictEqual({ userId: 'google-oauth2|103413235432642364' });
+    expect(res.body).toStrictEqual({ userId: 'google-oauth2|12345678910' });
   });
 });
 

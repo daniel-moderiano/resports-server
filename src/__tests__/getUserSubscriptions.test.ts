@@ -2,7 +2,8 @@ import { getUserSubscriptions } from '../controllers/userControllers';
 import request from 'supertest';
 import express from 'express';
 import './dbSetupTeardown';
-import { deleteSubscription, insertChannel, insertSubscription } from '../db/helpers';
+import { deleteSubscription, insertSubscription } from '../db/subscriptionHelpers';
+import { insertChannel } from '../db/channelHelpers';
 
 // Setup new app instance
 const app = express();
