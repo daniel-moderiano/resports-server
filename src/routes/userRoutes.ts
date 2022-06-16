@@ -1,6 +1,7 @@
 import express from 'express';
 import { requiresAuth } from 'express-openid-connect';
 import { getCurrentUser, getUser, updateUser, deleteUser, getUserSubscriptions, getPasswordChange, getEmailVerification } from '../controllers/userControllers';
+import { getAccessToken } from '../middleware/accessTokenMiddleware';
 
 const router = express.Router();
 
@@ -8,7 +9,7 @@ const router = express.Router();
 
 router.get('/current', requiresAuth(), getCurrentUser);
 router.route('/:userId')
-  .get(requiresAuth(), getUser)
+  .get(requiresAuth(), getAccessToken, getUser)
   .delete(requiresAuth(), deleteUser)
   .patch(requiresAuth(), updateUser);
 

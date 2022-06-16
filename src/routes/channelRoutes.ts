@@ -6,7 +6,7 @@ const router = express.Router();
 
 // Base path /api/channels
 
-router.get('/', getAllChannels);
+router.get('/', requiresAuth(), getAllChannels);
 
 router.get('/:channelId', requiresAuth(), getChannel)
 

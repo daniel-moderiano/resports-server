@@ -1,7 +1,7 @@
 import asyncHandler from 'express-async-handler';
 import fetch from 'cross-fetch';
 import { body, validationResult } from 'express-validator';
-import { selectUserSubscriptions } from '../db/helpers';
+import { selectUserSubscriptions } from '../db/subscriptionHelpers';
 import { RequestOIDCUser } from '../types/APITypes';
 
 // @desc    Return the currently logged in user
@@ -14,7 +14,7 @@ const getCurrentUser = asyncHandler(async (req, res) => {
     throw new Error('An error occurred while fetching user data')
   }
 
-  const userData = req.oidc.user;
+  const userData = req.oidc.user as RequestOIDCUser;
   res.status(200).json(userData);
 });
 
@@ -23,13 +23,14 @@ const getCurrentUser = asyncHandler(async (req, res) => {
 // @route   GET /api/users/:userId
 // @access  Private
 const getUser = asyncHandler(async (req, res) => {
-  // Call Auth0 API with appropriate Bearer token
+  // Call Auth0 API with appropriate Bearer token to grant authorisation (will be on res.locals as a result of getAccessToken middleware)
   const response = await fetch(`${process.env.ISSUER}/api/v2/users/${req.params.userId}`, {
     method: 'get',
     headers: {
-      'Authorization': `Bearer ${process.env.API_KEY}`,
+      'Authorization': `Bearer ${res.locals.apiToken}`,
     },
   });
+  // * Data will be of the form {} with fields for either error, or user. Type each one
   const data = await response.json();
 
   if (data.error) {   // successful fetch, but either bad request or user does not exist. Throw error
