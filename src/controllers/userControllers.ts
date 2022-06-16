@@ -136,7 +136,6 @@ const deleteUser = asyncHandler(async (req, res) => {
 });
 
 
-
 // @desc    Enable a user to change their password
 // @route   GET /api/users/:userId/password-change
 // @access  Private
@@ -190,29 +189,26 @@ const getPasswordChange = asyncHandler(async (req, res) => {
 // @route   GET /api/users/:userId/email-verification
 // @access  Private
 const getEmailVerification = asyncHandler(async (req, res) => {
-  // User data successfully fetched - now able to construct POST request to send email verification
-  const emailVerifyOptions = {
-    user_id: req.params.userId,
-    client_id: process.env.CLIENT_ID,
-  }
-
-  // Make POST request with user data
-  const emailVerifyResponse = await fetch(`${process.env.ISSUER}/api/v2/jobs/verification-email`, {
+  // Make POST request with user data. Note this API endpoint is distinct from the user management API above 
+  const response = await fetch(`${process.env.ISSUER}/api/v2/jobs/verification-email`, {
     method: 'post',
     headers: {
       'Authorization': `Bearer ${res.locals.apiToken}`,
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify(emailVerifyOptions),
+    body: JSON.stringify({
+      user_id: req.params.userId,
+      client_id: process.env.CLIENT_ID,
+    }),
   });
 
-  const emailResponseData = await emailVerifyResponse.json()
-
-  if (emailResponseData.error) {   // successful fetch, but either bad request or user does not exist. Throw error
-    res.status(emailResponseData.statusCode);
-    throw new Error(emailResponseData.message)
+  if (response.status !== 200) {    // error occurred with API request
+    const error: Auth0ApiError = await response.json();
+    res.status(error.statusCode);
+    throw new Error(error.message)
   }
 
+  // Successful API call. No content really required here, so a simple JSON message is provided
   res.json({ message: 'Email verification link sent' })
 });
 

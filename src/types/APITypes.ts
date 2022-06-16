@@ -53,6 +53,7 @@ export interface Auth0ApiError {
   statusCode: number;
   error: string;
   message: string;
+  errorCode?: string;
 }
 
 // Receive this object when requesting new Auth0 Management API JWTs

@@ -10,7 +10,7 @@ const router = express.Router();
 router.get('/current', requiresAuth(), getCurrentUser);
 router.route('/:userId')
   .get(requiresAuth(), getAccessToken, getUser)
-  .delete(getAccessToken, deleteUser)
+  .delete(requiresAuth(), getAccessToken, deleteUser)
   .patch(requiresAuth(), getAccessToken, updateUser);
 
 router.route('/:userId/subscriptions').get(requiresAuth(), getUserSubscriptions);
