@@ -1,12 +1,11 @@
+import 'dotenv/config';
 import express, { Application } from 'express';
 import channelRoutes from './routes/channelRoutes';
 import subscriptionRoutes from './routes/subscriptionRoutes';
-import getDb from './db/index';
-import 'dotenv/config';
+import userRoutes from './routes/userRoutes';
 import { config } from './config/auth0';
 import { auth } from 'express-openid-connect';
 import { errorHandler } from './middleware/errorMiddleware';
-import userRoutes from './routes/userRoutes';
 import { signupController } from './controllers/signupController';
 
 const app: Application = express();
@@ -14,13 +13,6 @@ const app: Application = express();
 // Allow parsing of form data in req.body for POST and other requests
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-
-// Establish database 
-(async () => {
-  const db = getDb();
-  await db.connect();
-  console.log('Postgres connected');
-})();
 
 // * Although the form_post warning appears, requests should still be able to be sent fine with HTTP. If issues occur, run the npm https script
 // auth router attaches /login, /logout, and /callback routes to the baseURL.
