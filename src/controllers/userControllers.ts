@@ -8,7 +8,7 @@ import { Auth0ApiError, Auth0User, RequestOIDCUser } from '../types/APITypes';
 // @route   GET /api/users/current
 // @access  Private
 const getCurrentUser = asyncHandler(async (req, res) => {
-  // As a protected route, this function should always have access to req.oidc.user, but this check confirms it
+  // As a protected route, this function should always have access to req.oidc.user; this check may be redundant
   if (!req.oidc.user) {
     res.status(500)
     throw new Error('An error occurred while fetching user data')
@@ -45,7 +45,6 @@ const getUser = asyncHandler(async (req, res) => {
 // @desc    Update user details
 // @route   PUT /api/users/:userId
 // @access  Private
-// * Does not resend verification email on email address change, but will set email_verified to false automatically. Consider manually adding automatic verification link resending if email is changed?
 const updateUser = [
   // Validate input. Only these details are changeable. These are validated by Auth0 as well so this may be redundant. But this does provide an easier way to give useful error messages
   body('email', 'Email is required').trim().isString().isLength({ min: 1 }),
@@ -59,57 +58,52 @@ const updateUser = [
     // Validation errors have occurred. Return these to the user
     if (!errors.isEmpty()) {
       res.status(400).json(errors.array());   // Do not throw single error here, pass all validation errors
-    } else {
-      // As a protected route, this function should always have access to req.oidc.user
-      if (!req.oidc.user) {
-        res.status(500)
-        throw new Error('An error occurred while fetching user data')
-      }
+    }
 
-      const currentUserData = req.oidc.user as RequestOIDCUser;
+    const currentUserData = req.oidc.user as RequestOIDCUser;
 
-      // Determine if the user is attempting to change their email address
-      const emailChanged = currentUserData.email !== req.body.email;
+    // Determine if the user is attempting to change their email address
+    const emailChanged = currentUserData.email !== req.body.email;
 
-      const updateDetails = {
-        email: req.body.email,
-        nickname: req.body.nickname
-      }
-      // Call Auth0 API with appropriate Bearer token
-      const response = await fetch(`${process.env.ISSUER}/api/v2/users/${req.params.userId}`, {
-        method: 'patch',
+    const updateDetails = {
+      email: req.body.email,
+      nickname: req.body.nickname
+    }
+    // Call Auth0 API with appropriate Bearer token
+    const response = await fetch(`${process.env.ISSUER}/api/v2/users/${req.params.userId}`, {
+      method: 'patch',
+      headers: {
+        'Authorization': `Bearer ${res.locals.apiToken}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(updateDetails)
+    });
+
+    const data = await response.json();
+
+    if (data.error) {   // successful fetch, but either bad request or user does not exist. Throw error
+      res.status(data.statusCode);
+      throw new Error(data.message)
+    }
+
+    // After successful update, resend email verification link if email has been changed
+    if (emailChanged) {
+      // * Do not bother with error handling here. The update operation has succeeded; this is a side effect only
+      await fetch(`${process.env.ISSUER}/api/v2/jobs/verification-email`, {
+        method: 'post',
         headers: {
           'Authorization': `Bearer ${res.locals.apiToken}`,
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(updateDetails)
+        body: JSON.stringify({
+          user_id: req.params.userId,
+          client_id: process.env.CLIENT_ID,
+        }),
       });
-
-      const data = await response.json();
-
-      if (data.error) {   // successful fetch, but either bad request or user does not exist. Throw error
-        res.status(data.statusCode);
-        throw new Error(data.message)
-      }
-
-      // After successful update, resend email verification link if email has been changed
-      if (emailChanged) {
-        // * Do not bother with error handling here. The update operation has succeeded; this is a side effect only
-        await fetch(`${process.env.ISSUER}/api/v2/jobs/verification-email`, {
-          method: 'post',
-          headers: {
-            'Authorization': `Bearer ${res.locals.apiToken}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            user_id: req.params.userId,
-            client_id: process.env.CLIENT_ID,
-          }),
-        });
-      }
-
-      res.status(200).json(data);
     }
+
+    res.status(200).json(data);
+
   }),
 ];
 
