@@ -78,7 +78,7 @@ const updateUser = [
       const response = await fetch(`${process.env.ISSUER}/api/v2/users/${req.params.userId}`, {
         method: 'patch',
         headers: {
-          'Authorization': `Bearer ${process.env.API_KEY}`,
+          'Authorization': `Bearer ${res.locals.apiToken}`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(updateDetails)
@@ -97,7 +97,7 @@ const updateUser = [
         await fetch(`${process.env.ISSUER}/api/v2/jobs/verification-email`, {
           method: 'post',
           headers: {
-            'Authorization': `Bearer ${process.env.API_KEY}`,
+            'Authorization': `Bearer ${res.locals.apiToken}`,
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({
@@ -120,7 +120,7 @@ const deleteUser = asyncHandler(async (req, res) => {
   const response = await fetch(`${process.env.ISSUER}/api/v2/users/${req.params.userId}`, {
     method: 'delete',
     headers: {
-      'Authorization': `Bearer ${process.env.API_KEY}`,
+      'Authorization': `Bearer ${res.locals.apiToken}`,
     },
   });
 
@@ -143,7 +143,7 @@ const getPasswordChange = asyncHandler(async (req, res) => {
   const getUserResponse = await fetch(`${process.env.ISSUER}/api/v2/users/${req.params.userId}`, {
     method: 'get',
     headers: {
-      'Authorization': `Bearer ${process.env.API_KEY}`,
+      'Authorization': `Bearer ${res.locals.apiToken}`,
     },
   });
 
@@ -165,7 +165,7 @@ const getPasswordChange = asyncHandler(async (req, res) => {
   const passwordChangeResponse = await fetch(`${process.env.ISSUER}/dbconnections/change_password`, {
     method: 'post',
     headers: {
-      'Authorization': `Bearer ${process.env.API_KEY}`,
+      'Authorization': `Bearer ${res.locals.apiToken}`,
       'Content-Type': 'application/json'
     },
     body: JSON.stringify(passwordChangeOptions),
@@ -198,7 +198,7 @@ const getEmailVerification = asyncHandler(async (req, res) => {
   const emailVerifyResponse = await fetch(`${process.env.ISSUER}/api/v2/jobs/verification-email`, {
     method: 'post',
     headers: {
-      'Authorization': `Bearer ${process.env.API_KEY}`,
+      'Authorization': `Bearer ${res.locals.apiToken}`,
       'Content-Type': 'application/json'
     },
     body: JSON.stringify(emailVerifyOptions),
