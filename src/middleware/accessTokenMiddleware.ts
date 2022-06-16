@@ -2,7 +2,9 @@ import asyncHandler from 'express-async-handler';
 import fetch from 'cross-fetch';
 import { APIToken, APITokenError } from '../types/APITypes';
 
+// Use this middleware on any route that is making requests to the Auth0 management API. It will request a new JWT before attempting to call the API, so you can be sure you're always making requests with a valid JWT (otherwise tokens will expire in 24 hours)
 export const getAccessToken = asyncHandler(async (req, res, next) => {
+  // * These IDs/secrets are NOT the same as the Resports app credentials used elsewhere
   const payload = {
     client_id: process.env.API_CLIENT_ID,
     client_secret: process.env.API_CLIENT_SECRET,

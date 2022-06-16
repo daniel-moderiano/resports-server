@@ -10,12 +10,12 @@ const router = express.Router();
 router.get('/current', requiresAuth(), getCurrentUser);
 router.route('/:userId')
   .get(requiresAuth(), getAccessToken, getUser)
-  .delete(requiresAuth(), deleteUser)
-  .patch(requiresAuth(), updateUser);
+  .delete(requiresAuth(), getAccessToken, deleteUser)
+  .patch(requiresAuth(), getAccessToken, updateUser);
 
 router.route('/:userId/subscriptions').get(requiresAuth(), getUserSubscriptions);
-router.route('/:userId/password-change').get(requiresAuth(), getPasswordChange);
-router.route('/:userId/email-verification').get(requiresAuth(), getEmailVerification);
+router.route('/:userId/password-change').get(requiresAuth(), getAccessToken, getPasswordChange);
+router.route('/:userId/email-verification').get(requiresAuth(), getAccessToken, getEmailVerification);
 
 
 export default router;
