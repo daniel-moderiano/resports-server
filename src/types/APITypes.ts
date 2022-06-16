@@ -14,14 +14,45 @@ export interface RequestOIDCUser {
   sub: string;
 }
 
+// Identitiy is a nested object within the Auth- user interface below
+export interface Identities {
+  connection: string;
+  user_id: string;
+  provider: string;
+  isSocial: boolean;
+}
+
 // Full user object returned by Auth0 getUser API route
 export interface Auth0User {
-
+  email: string;
+  email_verified: boolean;
+  username: string;
+  phone_number?: string;
+  phone_verified?: boolean;
+  user_id: string;
+  created_at: string;
+  updated_at: string;
+  identities: Identities[],
+  app_metadata?: {},
+  user_metadata?: {},
+  picture: string;
+  name: string;
+  nickname: string;
+  multifactor?: [];
+  last_ip: string;
+  last_login: string;
+  logins_count: number;
+  blocked?: boolean;
+  given_name?: string;
+  family_name?: string;
+  locale?: string;
 }
 
 // JSON error returned with non-status 200 errors from a number of Auth0 API routes
-export interface Auth0Error {
-
+export interface Auth0ApiError {
+  statusCode: number;
+  error: string;
+  message: string;
 }
 
 // Receive this object when requesting new Auth0 Management API JWTs

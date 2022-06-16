@@ -2,7 +2,7 @@ import asyncHandler from 'express-async-handler';
 import fetch from 'cross-fetch';
 import { body, validationResult } from 'express-validator';
 import { selectUserSubscriptions } from '../db/subscriptionHelpers';
-import { RequestOIDCUser } from '../types/APITypes';
+import { Auth0ApiError, Auth0User, RequestOIDCUser } from '../types/APITypes';
 
 // @desc    Return the currently logged in user
 // @route   GET /api/users/current
@@ -30,15 +30,16 @@ const getUser = asyncHandler(async (req, res) => {
       'Authorization': `Bearer ${res.locals.apiToken}`,
     },
   });
-  // * Data will be of the form {} with fields for either error, or user. Type each one
-  const data = await response.json();
 
-  if (data.error) {   // successful fetch, but either bad request or user does not exist. Throw error
-    res.status(data.statusCode);
-    throw new Error(data.message)
+  if (response.status !== 200) {    // error occurred with API request
+    const error: Auth0ApiError = await response.json();
+    res.status(error.statusCode);
+    throw new Error(error.message)
   }
 
-  res.status(200).json(data);
+  // Successful fetch response
+  const user: Auth0User = await response.json();
+  res.status(200).json(user);
 });
 
 // @desc    Update user details
