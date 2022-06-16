@@ -1,26 +1,17 @@
 import asyncHandler from 'express-async-handler';
-import { deleteChannel, deleteSubscription, insertSubscription, selectChannel, selectSubscription, upsertChannel } from '../db/helpers';
+import { selectSubscription, insertSubscription, deleteSubscription } from '../db/subscriptionHelpers';
+import { upsertChannel, deleteChannel } from '../db/channelHelpers';
 import { body, validationResult } from 'express-validator';
 import getDb from '../db/index'
-
-interface Subscription {
-  subscription_id: number;
-  user_id: string;
-  channel_id: string;
-  platform: string;
-}
-
+import { SubscriptionDbResult } from '../types/databaseTypes';
 
 // @desc    Get subscription
 // @route   GET /api/subscriptions/subscriptionId
 // @access  Private
 const getSubscription = asyncHandler(async (req, res) => {
-  // subscription ID grabbed from URL params
-  const subscriptionId = req.params.subscriptionId;
-  const result = await selectSubscription(subscriptionId);
-
-  // ? Is this typescript addition needlessly complex?
-  const subscription: Subscription | undefined = result.rows[0];
+  // Search for and extract selected subscription from database
+  const result = await selectSubscription(req.params.subscriptionId);
+  const subscription: SubscriptionDbResult | undefined = result.rows[0];
 
   if (!subscription) {    // subscription not found
     res.status(400);
@@ -43,13 +34,12 @@ const addSubscription = [
 
   // Process request after input data has been validated
   asyncHandler(async (req, res, next) => {
-    // Because this route is protected, this controller will not be reached unless the user is authenticated. Therefore, we will always have access too res.oidc.user at this point. A conditional check is redundant here.
-    // Isolate the ID portion from the authentication type (e.g. auth0|1234 -> 1234)
-    let userId: undefined | string;
+    // Because this route is protected, this controller will not be reached unless the user is authenticated. Therefore, we will always have access too res.oidc.user at this point. A conditional check may be redundant here.
+    let userId: string;
 
     // For testing purposes, use the res.locals object, which can be changed to suit testing needs
     if (process.env.TEST_ENV === 'true') {
-      userId = res.locals.user!.sub as string;
+      userId = res.locals.user.sub as string;
     } else {
       userId = req.oidc.user!.sub as string;
     }
@@ -74,36 +64,38 @@ const addSubscription = [
         platform: req.body.platform
       });
 
-      res.status(200).json(result.rows[0]);   // Return status OK and new subscription to client
+      // It is safe to assign directly to SubscriptionDbResult here, as any failure in insert would throw error rather then leave row[0] undefined
+      const newSubscription: SubscriptionDbResult = result.rows[0];
+
+      res.status(200).json(newSubscription);
     }
   }),
 ];
+
 
 // @desc    Delete subscription
 // @route   DELETE /api/subscriptions/subscriptionId
 // @access  Private
 // * Named with 'Controller' suffix to distinguish from database helper function with the same name
 const deleteSubscriptionController = asyncHandler(async (req, res) => {
-  // subscription ID grabbed from URL params
-  const subscriptionId = req.params.subscriptionId;
-  const result = await deleteSubscription(subscriptionId);
+  // Attempt delete operation on specified subscription, and extract details of deleted subscription
+  const result = await deleteSubscription(req.params.subscriptionId);
+  const deletedSubscription: SubscriptionDbResult | undefined = result.rows[0];
 
-  // ? Is this typescript addition needlessly complex?
-  const subscription: Subscription | undefined = result.rows[0];
-
-  if (!subscription) {    // subscription not found
+  if (!deletedSubscription) {    // subscription not found
     res.status(400);
     throw new Error('subscription not found');
   }
 
-  // subscription found in db and deleted. Perform check for any further subs involving this channel
-  const associatedSubs = await getDb().query('SELECT * FROM subscriptions WHERE channel_id=$1', [subscription.channel_id])
+  // subscription found in db and deleted. Check for any additional or 'associated' subscriptions for the same channel
+  const associatedSubscriptions = await getDb().query('SELECT * FROM subscriptions WHERE channel_id=$1', [deletedSubscription.channel_id])
 
-  if (associatedSubs.rowCount === 0) {    // We removed the only subscription to that channel; remove the channel
-    await deleteChannel(subscription.channel_id);
+  if (associatedSubscriptions.rowCount === 0) {    // We removed the only subscription to that channel; remove the channel
+    await deleteChannel(deletedSubscription.channel_id);
   }
 
-  res.status(200).json(result.rows[0]);
+  // Finally, return the deleted subscription in case additional UI information requires it
+  res.status(200).json(deletedSubscription);
 });
 
 export {

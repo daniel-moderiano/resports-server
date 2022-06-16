@@ -1,4 +1,4 @@
-import { selectAllFromTable } from "../db/helpers";
+import { selectAllFromTable } from "../db/generalHelpers";
 import './dbSetupTeardown';
 
 describe('database initialisation', () => {

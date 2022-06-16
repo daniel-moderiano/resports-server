@@ -2,7 +2,7 @@ import { getAllChannels } from '../controllers/channelControllers';
 import request from 'supertest';
 import express from 'express';
 import './dbSetupTeardown';
-import { deleteChannel, insertChannel } from '../db/helpers';
+import { deleteChannel, insertChannel } from '../db/channelHelpers';
 
 // Setup new app instance
 const app = express();

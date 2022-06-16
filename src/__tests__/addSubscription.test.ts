@@ -3,7 +3,6 @@ import request from 'supertest';
 import express from 'express';
 import './dbSetupTeardown';
 import { addTestUser } from '../middleware/testUserMiddleware';
-import { selectAllFromTable } from '../db/helpers'
 
 // * User ID will only be accessible in a test environment within this controller
 process.env.TEST_ENV === 'true';
@@ -28,7 +27,7 @@ describe('getSubscription controller', () => {
       .send({
         channelId: '1234',
         channelName: 'VGBootCamp',
-        userId: '12345678910',
+        userId: 'google-oauth2|12345678910',
         platform: 'twitch'
       });
 
@@ -36,7 +35,7 @@ describe('getSubscription controller', () => {
     expect(res.statusCode).toEqual(200);
     expect(res.body).toStrictEqual({
       channel_id: '1234',
-      user_id: '12345678910',
+      user_id: 'google-oauth2|12345678910',
       platform: 'twitch',
       subscription_id: 1
     });
@@ -48,7 +47,7 @@ describe('getSubscription controller', () => {
       .send({
         channelId: '1234',
         channelName: 'VGBootCamp',
-        userId: '12345678910',
+        userId: 'google-oauth2|12345678910',
         platform: 'twitch'
       });
 

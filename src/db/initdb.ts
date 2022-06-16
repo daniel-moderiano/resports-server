@@ -11,20 +11,8 @@ export const init = async () => {
     !process.env.TEST_ENV && console.log("dropping subscriptions table, if exists...");
     await db.query('DROP TABLE IF EXISTS subscriptions;')
 
-    // process.env.TEST_ENV && console.log("dropping users table, if exists...");
-    // await db.query('DROP TABLE IF EXISTS users;')
-
     !process.env.TEST_ENV && console.log("dropping channels table, if exists...");
     await db.query('DROP TABLE IF EXISTS channels;')
-
-    // Authentication with Auth0 - the user_id will be added following user auth with Auth0, which generates a unique ID
-    // process.env.TEST_ENV && console.log("creating users table...");
-    // await db.query(`
-    //   CREATE TABLE users (
-    //     user_id TEXT PRIMARY KEY,
-    //     user_email TEXT NOT NULL UNIQUE
-    //   );
-    // `);
 
     // Consider additional information e.g. channel logo_url, description, etc. Channel ID provided by YT/Twitch APIs
     !process.env.TEST_ENV && console.log("creating channels table...");

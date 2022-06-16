@@ -1,4 +1,7 @@
+// * Unfortunately, despite this setup and teardown, running different test suites in succession completely fails. Running them individually is recommended when working on specific files until this is fixed
+
 import getDb from '../db'
+import { dropTable } from '../db/generalHelpers';
 import { init } from '../db/initdb'
 
 // ! Ensure test DB is used

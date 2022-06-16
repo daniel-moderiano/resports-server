@@ -20,7 +20,9 @@ declare global {
       BASE_URL: string;
       CLIENT_ID: string;
       ISSUER: string;
-      API_KEY: string;
+      API_CLIENT_ID: string;
+      API_CLIENT_SECRET: string;
+      API_TOKEN: string | null
       HOST_URL: string;
       NODE_ENV: 'development' | 'production';
       PORT: number
