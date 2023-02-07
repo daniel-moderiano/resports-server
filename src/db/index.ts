@@ -44,7 +44,7 @@ const awsPool = new Pool({
 
 // Use this function to get access to the pool for queries. This is crafted as a function to ensure the correct pool is returned based on the TEST_ENV at the time of calling this function
 const getDb = () => {
-  return awsPool;
+  // return awsPool;
   if (process.env.TEST_ENV === "true") {
     // Provide access to 'error' database to test error handling in db utility functions
     if (process.env.TEST_ERROR === "true") {
