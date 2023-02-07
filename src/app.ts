@@ -30,12 +30,13 @@ app.use(errorHandler);
 
 import getDb from "./db";
 
-getDb().query(`
-CREATE TABLE IF NOT EXISTS users (
-  username TEXT UNIQUE NOT NULL PRIMARY KEY,
-  email TEXT UNIQUE NOT NULL,
-  created_on TIMESTAMP NOT NULL
-)
-`);
+getDb()
+  .query(
+    `select * from information_schema.tables
+  where table_schema not in ('information_schema', 'pg_catalog') and
+  table_type = 'BASE TABLE'
+`
+  )
+  .then((res) => console.log(res));
 
 export default app;
