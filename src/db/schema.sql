@@ -5,3 +5,8 @@ CREATE TABLE [IF NOT EXISTS] users (
   created_on TIMESTAMP NOT NULL
 );
 
+-- Channel ID will be provided via video platform APIs
+CREATE TABLE [IF NOT EXISTS] channels (
+  channel_id TEXT NOT NULL PRIMARY KEY,
+  platform TEXT NOT NULL
+);
