@@ -28,15 +28,4 @@ app.use("/api/subscriptions", subscriptionRoutes);
 // Use error handler AFTER all routes are defined above
 app.use(errorHandler);
 
-import getDb from "./db";
-
-getDb()
-  .query(
-    `select * from information_schema.tables
-  where table_schema not in ('information_schema', 'pg_catalog') and
-  table_type = 'BASE TABLE'
-`
-  )
-  .then((res) => console.log(res));
-
 export default app;

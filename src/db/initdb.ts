@@ -85,7 +85,8 @@ export const initialiseDatabase = async () => {
   try {
     await dropExistingTables();
     await createNewTables();
+    console.log("Database initialisation completed successfully");
   } catch (error) {
-    console.log("Finished with errors");
+    console.log("Database initialisation completed with errors");
   }
 };
