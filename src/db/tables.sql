@@ -1,3 +1,5 @@
+-- Creates all tables for the Resports database
+
 -- Will link with AWS Cognito to provide username
 CREATE TABLE [IF NOT EXISTS] users (
   username TEXT UNIQUE NOT NULL PRIMARY KEY,
