@@ -3,13 +3,14 @@
 import getDb from ".";
 import "dotenv/config";
 
-export const init = async () => {
-  // ! Do not ever run this in a production environment
+const dropExistingTables = async () => {
   if (process.env.NODE_ENV !== "development") {
     return;
   }
 
   const db = getDb();
+
+  console.log("Removing existing tables...");
 
   try {
     // Saved channels table connects the other tables, and must be dropped first
@@ -22,6 +23,23 @@ export const init = async () => {
     console.log("dropping users table, if it exists...");
     await db.query("DROP TABLE IF EXISTS users;");
 
+    console.log("All existing tables removed");
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+const createNewTables = async () => {
+  if (process.env.NODE_ENV !== "development") {
+    return;
+  }
+
+  const db = getDb();
+
+  console.log("Creating new tables...");
+
+  try {
     console.log("creating channels table...");
     await db.query(`
       CREATE TABLE IF NOT EXISTS channels (
@@ -51,18 +69,19 @@ export const init = async () => {
           REFERENCES channels (channel_id)
       );
     `);
+
+    console.log("All new tables created");
   } catch (err) {
     console.log(err);
     throw err;
   }
 };
 
-// !Call this only when you are positive you want to wipe the database and start fresh
-(async () => {
+export const initialiseDatabase = async () => {
   try {
-    await init();
-    console.log("finished");
+    await dropExistingTables();
+    await createNewTables();
   } catch (error) {
-    console.log("finished with errors");
+    console.log("Finished with errors");
   }
-})();
+};
