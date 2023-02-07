@@ -1,12 +1,12 @@
-import 'dotenv/config';
-import express, { Application } from 'express';
-import channelRoutes from './routes/channelRoutes';
-import subscriptionRoutes from './routes/subscriptionRoutes';
-import userRoutes from './routes/userRoutes';
-import { config } from './config/auth0';
-import { auth } from 'express-openid-connect';
-import { errorHandler } from './middleware/errorMiddleware';
-import { signupController } from './controllers/signupController';
+import "dotenv/config";
+import express, { Application } from "express";
+import channelRoutes from "./routes/channelRoutes";
+import subscriptionRoutes from "./routes/subscriptionRoutes";
+import userRoutes from "./routes/userRoutes";
+import { config } from "./config/auth0";
+import { auth } from "express-openid-connect";
+import { errorHandler } from "./middleware/errorMiddleware";
+import { signupController } from "./controllers/signupController";
 
 const app: Application = express();
 
@@ -18,12 +18,12 @@ app.use(express.urlencoded({ extended: false }));
 // auth router attaches /login, /logout, and /callback routes to the baseURL.
 // Sign-up route is manually attached
 app.use(auth(config));
-app.get('/sign-up', signupController)
+app.get("/sign-up", signupController);
 
 // Use routes
-app.use('/api/users', userRoutes);
-app.use('/api/channels', channelRoutes);
-app.use('/api/subscriptions', subscriptionRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/channels", channelRoutes);
+app.use("/api/subscriptions", subscriptionRoutes);
 
 // Use error handler AFTER all routes are defined above
 app.use(errorHandler);

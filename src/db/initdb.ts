@@ -1,18 +1,20 @@
-// Run this file to initialise the postgreSQL database with the schema outlined below. 
+// Run this file to initialise the postgreSQL database with the schema outlined below.
 // ! Do NOT run this file on an existing database or all data will be lost (unless you are working with a test db)
 import getDb from ".";
-import 'dotenv/config';
+import "dotenv/config";
 
 export const init = async () => {
   const db = getDb();
 
   try {
     // Subscriptions table connects the other tables, and must be dropped first
-    !process.env.TEST_ENV && console.log("dropping subscriptions table, if exists...");
-    await db.query('DROP TABLE IF EXISTS subscriptions;')
+    !process.env.TEST_ENV &&
+      console.log("dropping subscriptions table, if exists...");
+    await db.query("DROP TABLE IF EXISTS subscriptions;");
 
-    !process.env.TEST_ENV && console.log("dropping channels table, if exists...");
-    await db.query('DROP TABLE IF EXISTS channels;')
+    !process.env.TEST_ENV &&
+      console.log("dropping channels table, if exists...");
+    await db.query("DROP TABLE IF EXISTS channels;");
 
     // Consider additional information e.g. channel logo_url, description, etc. Channel ID provided by YT/Twitch APIs
     !process.env.TEST_ENV && console.log("creating channels table...");
@@ -34,7 +36,6 @@ export const init = async () => {
         UNIQUE (user_id, channel_id)
       );
     `);
-
   } catch (err) {
     console.log(err);
     throw err;
@@ -42,11 +43,11 @@ export const init = async () => {
 };
 
 // ! Call this only when you are positive you want to wipe the database
-// (async () => {
-//   try {
-//     await init();
-//     console.log("finished");
-//   } catch (error) {
-//     console.log("finished with errors");
-//   }
-// })();
+(async () => {
+  try {
+    await init();
+    console.log("finished");
+  } catch (error) {
+    console.log("finished with errors");
+  }
+})();

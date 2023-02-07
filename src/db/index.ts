@@ -1,8 +1,8 @@
 // * This line is required to avoid a known issue with ts-node that does not recognise manual .env types
 /// <reference path="../../environment.d.ts" />
 
-import 'dotenv/config'
-import { Pool } from 'pg';
+import "dotenv/config";
+import { Pool } from "pg";
 
 // Define the db connection pools. These will be used to run queries
 
@@ -14,14 +14,14 @@ const testPool = new Pool({
   host: process.env.TEST_DB_HOST,
   database: process.env.TEST_DB_NAME,
   password: process.env.TEST_DB_PASSWORD,
-  port: process.env.TEST_DB_PORT
-})
+  port: process.env.TEST_DB_PORT,
+});
 
 // Used in testing for error handling. This is a non existent databse that should cause a connection error
 const errorPool = new Pool({
-  database: 'something that will throw bad connection',
-  password: 'this will result in error path',
-  port: 3211
+  database: "something that will throw bad connection",
+  password: "this will result in error path",
+  port: 3211,
 });
 
 // Used in development/production.
@@ -31,14 +31,22 @@ const pool = new Pool({
   host: process.env.DB_HOST,
   database: process.env.DB_NAME,
   password: process.env.DB_PASSWORD,
-  port: process.env.DB_PORT
+  port: process.env.DB_PORT,
+});
+
+const awsPool = new Pool({
+  user: process.env.DB_USER,
+  host: process.env.DB_HOST,
+  password: process.env.DB_PASSWORD,
+  port: process.env.DB_PORT,
+  database: "postgres",
 });
 
 // Use this function to get access to the pool for queries. This is crafted as a function to ensure the correct pool is returned based on the TEST_ENV at the time of calling this function
 const getDb = () => {
-  if (process.env.TEST_ENV === 'true') {
+  if (process.env.TEST_ENV === "true") {
     // Provide access to 'error' database to test error handling in db utility functions
-    if (process.env.TEST_ERROR === 'true') {
+    if (process.env.TEST_ERROR === "true") {
       return errorPool;
     } else {
       return testPool;
@@ -46,6 +54,6 @@ const getDb = () => {
   } else {
     return pool;
   }
-}
+};
 
 export default getDb;
