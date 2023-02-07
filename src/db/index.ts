@@ -14,12 +14,16 @@ export const getTestDb = () => {
   return testPool;
 };
 
-// Used in testing for error handling. This is a non existent databse that should cause a connection error
-const errorPool = new Pool({
-  database: "something that will throw bad connection",
-  password: "this will result in error path",
-  port: 3211,
-});
+export const getBrokenDb = () => {
+  // Used in testing for error handling. This is a non existent databse that will cause a connection error
+  const errorPool = new Pool({
+    database: "something that will throw bad connection",
+    password: "this will result in error path",
+    port: 3211,
+  });
+
+  return errorPool;
+};
 
 // Used in development/production.
 // This uses a chosen DB with the parameters below. In this case, while running locally, the 'resports' db will be used under a sysadmin superuser
