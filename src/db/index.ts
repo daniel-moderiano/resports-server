@@ -35,15 +35,16 @@ const pool = new Pool({
 });
 
 const awsPool = new Pool({
-  user: process.env.DB_USER,
-  host: process.env.DB_HOST,
-  password: process.env.DB_PASSWORD,
-  port: process.env.DB_PORT,
+  user: process.env.DEV_DB_USER,
+  host: process.env.DEV_DB_HOST,
+  password: process.env.DEV_DB_PASSWORD,
+  port: process.env.DEV_DB_PORT,
   database: "postgres",
 });
 
 // Use this function to get access to the pool for queries. This is crafted as a function to ensure the correct pool is returned based on the TEST_ENV at the time of calling this function
 const getDb = () => {
+  return awsPool;
   if (process.env.TEST_ENV === "true") {
     // Provide access to 'error' database to test error handling in db utility functions
     if (process.env.TEST_ERROR === "true") {

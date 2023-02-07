@@ -28,4 +28,14 @@ app.use("/api/subscriptions", subscriptionRoutes);
 // Use error handler AFTER all routes are defined above
 app.use(errorHandler);
 
+import getDb from "./db";
+
+getDb().query(`
+CREATE TABLE IF NOT EXISTS users (
+  username TEXT UNIQUE NOT NULL PRIMARY KEY,
+  email TEXT UNIQUE NOT NULL,
+  created_on TIMESTAMP NOT NULL
+)
+`);
+
 export default app;
