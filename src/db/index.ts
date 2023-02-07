@@ -6,7 +6,7 @@ import { Pool } from "pg";
 
 // Define the db connection pools. These will be used to run queries
 
-export const getTestDb = () => {
+export const getTestDatabase = () => {
   const testPool = new Pool({
     connectionString: process.env.DATABASE_URL,
   });
@@ -14,7 +14,7 @@ export const getTestDb = () => {
   return testPool;
 };
 
-export const getBrokenDb = () => {
+export const getBrokenDatabase = () => {
   // Used in testing for error handling. This is a non existent databse that will cause a connection error
   const errorPool = new Pool({
     database: "something that will throw bad connection",
@@ -25,6 +25,19 @@ export const getBrokenDb = () => {
   return errorPool;
 };
 
+export const getDevelopmentDatabase = () => {
+  // An AWS RDS Postgres instance for development purposes only. Do not use in production.
+  const developmentPool = new Pool({
+    user: process.env.DEV_DB_USER,
+    host: process.env.DEV_DB_HOST,
+    password: process.env.DEV_DB_PASSWORD,
+    port: process.env.DEV_DB_PORT,
+    database: "postgres",
+  });
+
+  return developmentPool;
+};
+
 // Used in development/production.
 // This uses a chosen DB with the parameters below. In this case, while running locally, the 'resports' db will be used under a sysadmin superuser
 const pool = new Pool({
@@ -33,14 +46,6 @@ const pool = new Pool({
   database: process.env.DB_NAME,
   password: process.env.DB_PASSWORD,
   port: process.env.DB_PORT,
-});
-
-const awsPool = new Pool({
-  user: process.env.DEV_DB_USER,
-  host: process.env.DEV_DB_HOST,
-  password: process.env.DEV_DB_PASSWORD,
-  port: process.env.DEV_DB_PORT,
-  database: "postgres",
 });
 
 // Use this function to get access to the pool for queries. This is crafted as a function to ensure the correct pool is returned based on the TEST_ENV at the time of calling this function
