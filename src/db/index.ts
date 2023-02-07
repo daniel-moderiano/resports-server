@@ -6,16 +6,13 @@ import { Pool } from "pg";
 
 // Define the db connection pools. These will be used to run queries
 
-// Used purely for testing purposes
-// * To ensure the test pool is used for queries, manually set the process.env.TEST_ENV to 'true' in test setup
-// * Please enter the personalised details for your test db that is SEPARATE to your production db
-const testPool = new Pool({
-  user: process.env.TEST_DB_USER,
-  host: process.env.TEST_DB_HOST,
-  database: process.env.TEST_DB_NAME,
-  password: process.env.TEST_DB_PASSWORD,
-  port: process.env.TEST_DB_PORT,
-});
+export const getTestDb = () => {
+  const testPool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+  });
+
+  return testPool;
+};
 
 // Used in testing for error handling. This is a non existent databse that should cause a connection error
 const errorPool = new Pool({
