@@ -6,13 +6,11 @@ const pool = new Pool({
 });
 
 it("completes", async () => {
-  pool.query("SELECT NOW()", (err, res) => {
-    if (err) {
-      throw err;
-    } else {
-      console.log(res.rows);
-    }
-    pool.end();
-  });
-  expect(true).toBe(true);
+  let numRows: number = 0;
+  const queryResult = await pool.query("SELECT NOW();");
+  numRows = queryResult.rows.length;
+
+  await pool.end();
+
+  expect(numRows).toBe(1);
 });
