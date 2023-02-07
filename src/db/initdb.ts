@@ -3,7 +3,7 @@
 import getDb from ".";
 import "dotenv/config";
 
-const dropExistingTables = async () => {
+export const dropExistingTables = async () => {
   if (process.env.NODE_ENV !== "development") {
     return;
   }
@@ -30,7 +30,7 @@ const dropExistingTables = async () => {
   }
 };
 
-const createNewTables = async () => {
+export const createNewTables = async () => {
   if (process.env.NODE_ENV !== "development") {
     return;
   }
@@ -78,6 +78,10 @@ const createNewTables = async () => {
 };
 
 export const initialiseDatabase = async () => {
+  if (process.env.NODE_ENV !== "development") {
+    return;
+  }
+
   try {
     await dropExistingTables();
     await createNewTables();
