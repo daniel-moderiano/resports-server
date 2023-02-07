@@ -1,53 +1,92 @@
-// Run this file to initialise the postgreSQL database with the schema outlined below.
-// ! Do NOT run this file on an existing database or all data will be lost (unless you are working with a test db)
+// Run this file to initialise a postgreSQL database using the node-pg package (i.e. va JS instead of SQL script).
+// ! Do NOT run this file on an existing database or all data will be lost
 import getDb from ".";
 import "dotenv/config";
 
-export const init = async () => {
+export const dropExistingTables = async () => {
+  if (process.env.NODE_ENV !== "development") {
+    return;
+  }
+
   const db = getDb();
 
-  try {
-    // Subscriptions table connects the other tables, and must be dropped first
-    !process.env.TEST_ENV &&
-      console.log("dropping subscriptions table, if exists...");
-    await db.query("DROP TABLE IF EXISTS subscriptions;");
+  console.log("Removing existing tables...");
 
-    !process.env.TEST_ENV &&
-      console.log("dropping channels table, if exists...");
+  try {
+    // Saved channels table connects the other tables, and must be dropped first
+    console.log("dropping subscriptions table, if it exists...");
+    await db.query("DROP TABLE IF EXISTS saved_channels;");
+
+    console.log("dropping channels table, if it exists...");
     await db.query("DROP TABLE IF EXISTS channels;");
 
-    // Consider additional information e.g. channel logo_url, description, etc. Channel ID provided by YT/Twitch APIs
-    !process.env.TEST_ENV && console.log("creating channels table...");
+    console.log("dropping users table, if it exists...");
+    await db.query("DROP TABLE IF EXISTS users;");
+
+    console.log("All existing tables removed");
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+export const createNewTables = async () => {
+  if (process.env.NODE_ENV !== "development") {
+    return;
+  }
+
+  const db = getDb();
+
+  console.log("Creating new tables...");
+
+  try {
+    console.log("creating channels table...");
     await db.query(`
-      CREATE TABLE channels (
-        channel_id TEXT PRIMARY KEY,
-        channel_name TEXT
+      CREATE TABLE IF NOT EXISTS channels (
+        channel_id TEXT NOT NULL PRIMARY KEY,
+        platform TEXT NOT NULL
       );
     `);
 
-    // Join table connecting users with channels. Must be a unique combination of useer/channel, i.e. no repeat subscriptions
-    !process.env.TEST_ENV && console.log("creating subscriptions table...");
+    console.log("creating users table...");
     await db.query(`
-      CREATE TABLE subscriptions (
-        subscription_id serial PRIMARY KEY,
-        platform text NOT NULL,
-        user_id TEXT NOT NULL,
-        channel_id TEXT REFERENCES channels(channel_id),
-        UNIQUE (user_id, channel_id)
+      CREATE TABLE IF NOT EXISTS users (
+        username TEXT UNIQUE NOT NULL PRIMARY KEY,
+        email TEXT UNIQUE NOT NULL,
+        created_on TIMESTAMP NOT NULL
       );
     `);
+
+    console.log("creating saved_channels table...");
+    await db.query(`
+      CREATE TABLE IF NOT EXISTS saved_channels (
+        username TEXT NOT NULL,
+        channel_id TEXT NOT NULL,
+        PRIMARY KEY (username, channel_id),
+        FOREIGN KEY (username)
+          REFERENCES users (username),
+        FOREIGN KEY (channel_id)
+          REFERENCES channels (channel_id)
+      );
+    `);
+
+    console.log("All new tables created");
   } catch (err) {
     console.log(err);
     throw err;
   }
 };
 
-// ! Call this only when you are positive you want to wipe the database
-(async () => {
-  try {
-    await init();
-    console.log("finished");
-  } catch (error) {
-    console.log("finished with errors");
+export const initialiseDatabase = async () => {
+  if (process.env.NODE_ENV !== "development") {
+    return;
   }
-})();
+
+  try {
+    await dropExistingTables();
+    await createNewTables();
+    console.log("Database initialisation completed successfully");
+  } catch (error) {
+    console.log("Database initialisation completed with errors");
+  }
+};

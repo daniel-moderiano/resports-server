@@ -1,4 +1,4 @@
-export { };
+export {};
 
 declare global {
   namespace NodeJS {
@@ -8,6 +8,7 @@ declare global {
       DB_HOST: string;
       DB_NAME: string;
       DB_PASSWORD: string;
+      DEV_DB_PORT: number;
       TEST_DB_PORT: number;
       TEST_DB_USER: string;
       TEST_DB_HOST: string;
@@ -22,10 +23,10 @@ declare global {
       ISSUER: string;
       API_CLIENT_ID: string;
       API_CLIENT_SECRET: string;
-      API_TOKEN: string | null
+      API_TOKEN: string | null;
       HOST_URL: string;
-      NODE_ENV: 'development' | 'production';
-      PORT: number
+      NODE_ENV: "development" | "production";
+      PORT: number;
     }
   }
 }
