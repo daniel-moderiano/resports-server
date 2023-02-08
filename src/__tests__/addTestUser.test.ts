@@ -1,10 +1,10 @@
-import { addTestUser } from '../middleware/testUserMiddleware';
-import request from 'supertest';
-import express from 'express';
-import './dbSetupTeardown';
+import { addTestUser } from "../middleware/testUserMiddleware";
+import request from "supertest";
+import express from "express";
+import "./dbSetupTeardown";
 
 // * User ID will only be accessible in a test environment within this controller
-process.env.TEST_ENV === 'true';
+process.env.TEST_ENV === "true";
 
 // Setup new app instance
 const app = express();
@@ -13,19 +13,17 @@ const app = express();
 app.use(addTestUser);
 
 // Simple index route to return the userId that should have been added by the test middleware
-app.get('/', (req, res) => {
+app.get("/", (req, res) => {
   const userId: string = res.locals.user.sub;
-  res.json({ userId })
+  res.json({ userId });
 });
 
-describe('addTestUser middleware', () => {
+describe("addTestUser middleware", () => {
   it("attaches a userId property via the res.locals.user.sub object", async () => {
-    const res = await request(app).get('/')
+    const res = await request(app).get("/");
 
-    expect(res.headers['content-type']).toMatch(/json/);
+    expect(res.headers["content-type"]).toMatch(/json/);
     expect(res.statusCode).toEqual(200);
-    expect(res.body).toStrictEqual({ userId: 'google-oauth2|12345678910' });
+    expect(res.body).toStrictEqual({ userId: "google-oauth2|12345678910" });
   });
 });
-
-

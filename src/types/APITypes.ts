@@ -10,7 +10,7 @@ export interface RequestOIDCUser {
   locale?: string;
   updated_at: string;
   email: string;
-  email_verified: boolean,
+  email_verified: boolean;
   sub: string;
 }
 
@@ -32,9 +32,9 @@ export interface Auth0User {
   user_id: string;
   created_at: string;
   updated_at: string;
-  identities: Identities[],
-  app_metadata?: {},
-  user_metadata?: {},
+  identities: Identities[];
+  app_metadata?: {};
+  user_metadata?: {};
   picture: string;
   name: string;
   nickname: string;

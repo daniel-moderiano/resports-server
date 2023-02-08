@@ -1,4 +1,4 @@
-import 'dotenv/config'
+import "dotenv/config";
 
 // Auth0 configuration. Used inside the auth router in app.ts
 export const config = {
@@ -7,5 +7,5 @@ export const config = {
   secret: process.env.AUTH_SECRET,
   baseURL: process.env.BASE_URL,
   clientID: process.env.CLIENT_ID,
-  issuerBaseURL: process.env.ISSUER
+  issuerBaseURL: process.env.ISSUER,
 };
