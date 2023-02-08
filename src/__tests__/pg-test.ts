@@ -1,16 +1,13 @@
 import { Pool } from "pg";
-const connectionString = process.env.DATABASE_URL;
-
-const pool = new Pool({
-  connectionString,
-});
+import { getTestDatabase } from "../db";
 
 it("completes", async () => {
+  const db = getTestDatabase();
   let numRows: number = 0;
-  const queryResult = await pool.query("SELECT NOW();");
+  const queryResult = await db.query("SELECT NOW();");
   numRows = queryResult.rows.length;
 
-  await pool.end();
+  await db.end();
 
   expect(numRows).toBe(1);
 });
