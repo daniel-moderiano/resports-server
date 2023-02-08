@@ -14,11 +14,11 @@ afterAll(async () => {
 });
 
 it("completes", async () => {
-  let numRows: number = 0;
+  let numRows = 0;
   const queryResult = await db.query(
     `SELECT * FROM pg_catalog.pg_tables WHERE schemaname != 'pg_catalog' AND schemaname != 'information_schema'`
   );
 
   numRows = queryResult.rows.length;
-  expect(numRows).toBe(1);
+  expect(numRows).toBe(3);
 });

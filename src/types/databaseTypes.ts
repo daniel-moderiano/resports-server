@@ -1,4 +1,3 @@
-
 // Subscription-related types
 export interface Subscription {
   // This is an optional field, because subscriptionId is not required when creating a subscription, but may be present in some cases for other reasons
