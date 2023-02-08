@@ -26,6 +26,10 @@ export const getBrokenDatabase = () => {
 };
 
 export const getDevelopmentDatabase = () => {
+  if (process.env.NODE_ENV !== "development") {
+    return;
+  }
+
   // An AWS RDS Postgres instance for development purposes only. Do not use in production.
   const developmentPool = new Pool({
     user: process.env.DEV_DB_USER,
