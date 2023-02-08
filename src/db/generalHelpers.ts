@@ -1,12 +1,15 @@
-import getDb from ".";
+import { getDevelopmentDatabase, getProductionDatabase } from ".";
+
+const db =
+  process.env.NODE_ENV === "development"
+    ? getDevelopmentDatabase()
+    : getProductionDatabase();
 
 // GENERALISED FUNCTIONS
 export const selectAllFromTable = async function (tableName: string) {
-  const db = getDb();
-  return db.query(`SELECT * FROM ${tableName}`)
+  return db.query(`SELECT * FROM ${tableName}`);
 };
 
 export const dropTable = async function (tableName: string) {
-  const db = getDb();
   await db.query(`DROP TABLE IF EXISTS ${tableName};`);
 };

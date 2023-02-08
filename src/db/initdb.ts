@@ -4,9 +4,11 @@ import "dotenv/config";
 import { Pool } from "pg";
 
 export const dropExistingTables = async (databasePool: Pool) => {
-  if (process.env.NODE_ENV !== "development") {
-    return;
-  }
+  // if (process.env.NODE_ENV !== "development") {
+  //   return;
+  // }
+
+  console.log("call drop func");
 
   const db = databasePool;
 
@@ -78,10 +80,6 @@ export const createNewTables = async (databasePool: Pool) => {
 };
 
 export const initialiseDatabase = async (databasePool: Pool) => {
-  if (process.env.NODE_ENV !== "development") {
-    return;
-  }
-
   try {
     await dropExistingTables(databasePool);
     await createNewTables(databasePool);
