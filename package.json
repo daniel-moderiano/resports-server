@@ -18,7 +18,7 @@
       "eslint --fix",
       "prettier --write"
     ],
-    "*.{ts}": "bash -c 'tsc --noEmit'"
+    "*.ts": "bash -c 'tsc --noEmit'"
   },
   "dependencies": {
     "cross-fetch": "^3.1.5",
