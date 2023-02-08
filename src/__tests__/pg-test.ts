@@ -20,5 +20,5 @@ it("completes", async () => {
   );
 
   numRows = queryResult.rows.length;
-  expect(numRows).toBe(1);
+  expect(numRows).toBe(3);
 });

@@ -6,7 +6,7 @@ import {
 } from "../db/subscriptionHelpers";
 import { upsertChannel, deleteChannel } from "../db/channelHelpers";
 import { body, validationResult } from "express-validator";
-import getDb from "../db/index";
+import { getDevelopmentDatabase } from "../db";
 import { SubscriptionDbResult } from "../types/databaseTypes";
 
 // @desc    Get subscription
@@ -100,7 +100,7 @@ const deleteSubscriptionController = asyncHandler(async (req, res) => {
   }
 
   // subscription found in db and deleted. Check for any additional or 'associated' subscriptions for the same channel
-  const associatedSubscriptions = await getDb().query(
+  const associatedSubscriptions = await getDevelopmentDatabase().query(
     "SELECT * FROM subscriptions WHERE channel_id=$1",
     [deletedSubscription.channel_id]
   );
