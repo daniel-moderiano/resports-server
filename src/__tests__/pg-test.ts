@@ -1,11 +1,6 @@
 import { getTestDatabase } from "../db";
 import { initialiseDatabase } from "../db/initdb";
 
-console.log(process.env);
-
-jest.setTimeout(20000);
-jest.resetModules();
-
 const db = getTestDatabase();
 
 // Ensure all tables are first dropped before re-creating them anew in the test DB
