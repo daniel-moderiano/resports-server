@@ -6,55 +6,48 @@ import { Pool } from "pg";
 
 // Define the db connection pools. These will be used to run queries
 
-// Used purely for testing purposes
-// * To ensure the test pool is used for queries, manually set the process.env.TEST_ENV to 'true' in test setup
-// * Please enter the personalised details for your test db that is SEPARATE to your production db
-const testPool = new Pool({
-  user: process.env.TEST_DB_USER,
-  host: process.env.TEST_DB_HOST,
-  database: process.env.TEST_DB_NAME,
-  password: process.env.TEST_DB_PASSWORD,
-  port: process.env.TEST_DB_PORT,
-});
+export const getTestDatabase = () => {
+  const testPool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+  });
 
-// Used in testing for error handling. This is a non existent databse that should cause a connection error
-const errorPool = new Pool({
-  database: "something that will throw bad connection",
-  password: "this will result in error path",
-  port: 3211,
-});
-
-// Used in development/production.
-// This uses a chosen DB with the parameters below. In this case, while running locally, the 'resports' db will be used under a sysadmin superuser
-const pool = new Pool({
-  user: process.env.DB_USER,
-  host: process.env.DB_HOST,
-  database: process.env.DB_NAME,
-  password: process.env.DB_PASSWORD,
-  port: process.env.DB_PORT,
-});
-
-const awsPool = new Pool({
-  user: process.env.DEV_DB_USER,
-  host: process.env.DEV_DB_HOST,
-  password: process.env.DEV_DB_PASSWORD,
-  port: process.env.DEV_DB_PORT,
-  database: "postgres",
-});
-
-// Use this function to get access to the pool for queries. This is crafted as a function to ensure the correct pool is returned based on the TEST_ENV at the time of calling this function
-const getDb = () => {
-  return awsPool;
-  if (process.env.TEST_ENV === "true") {
-    // Provide access to 'error' database to test error handling in db utility functions
-    if (process.env.TEST_ERROR === "true") {
-      return errorPool;
-    } else {
-      return testPool;
-    }
-  } else {
-    return pool;
-  }
+  return testPool;
 };
 
-export default getDb;
+export const getBrokenDatabase = () => {
+  // Used in testing for error handling. This is a non existent databse that will cause a connection error
+  const errorPool = new Pool({
+    database: "something that will throw bad connection",
+    password: "this will result in error path",
+    port: 3211,
+  });
+
+  return errorPool;
+};
+
+export const getDevelopmentDatabase = () => {
+  // An AWS RDS Postgres instance for development purposes only. Do not use in production.
+  const developmentPool = new Pool({
+    user: process.env.DEV_DB_USER,
+    host: process.env.DEV_DB_HOST,
+    password: process.env.DEV_DB_PASSWORD,
+    port: process.env.DEV_DB_PORT,
+    database: "postgres",
+  });
+
+  return developmentPool;
+};
+
+export const getProductionDatabase = () => {
+  // AWS RDS Postgres instance for production. Do not use this in testing or development.
+  // ? I expect this to be replaced with a more direct Lambda AWS SDK call later
+  const productionPool = new Pool({
+    user: process.env.PROD_DB_USER,
+    host: process.env.PROD_DB_HOST,
+    password: process.env.PROD_DB_PASSWORD,
+    port: process.env.PROD_DB_PORT,
+    database: "postgres",
+  });
+
+  return productionPool;
+};
