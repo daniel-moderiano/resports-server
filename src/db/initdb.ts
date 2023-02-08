@@ -1,14 +1,14 @@
 // Run this file to initialise a postgreSQL database using the node-pg package (i.e. va JS instead of SQL script).
 // ! Do NOT run this file on an existing database or all data will be lost
-import getDb from ".";
 import "dotenv/config";
+import { Pool } from "pg";
 
-export const dropExistingTables = async () => {
+export const dropExistingTables = async (databasePool: Pool) => {
   if (process.env.NODE_ENV !== "development") {
     return;
   }
 
-  const db = getDb();
+  const db = databasePool;
 
   console.log("Removing existing tables...");
 
@@ -30,12 +30,12 @@ export const dropExistingTables = async () => {
   }
 };
 
-export const createNewTables = async () => {
+export const createNewTables = async (databasePool: Pool) => {
   if (process.env.NODE_ENV !== "development") {
     return;
   }
 
-  const db = getDb();
+  const db = databasePool;
 
   console.log("Creating new tables...");
 
@@ -77,14 +77,14 @@ export const createNewTables = async () => {
   }
 };
 
-export const initialiseDatabase = async () => {
+export const initialiseDatabase = async (databasePool: Pool) => {
   if (process.env.NODE_ENV !== "development") {
     return;
   }
 
   try {
-    await dropExistingTables();
-    await createNewTables();
+    await dropExistingTables(databasePool);
+    await createNewTables(databasePool);
     console.log("Database initialisation completed successfully");
   } catch (error) {
     console.log("Database initialisation completed with errors");

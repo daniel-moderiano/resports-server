@@ -1,4 +1,3 @@
-import { Pool } from "pg";
 import { getTestDatabase } from "../db";
 
 it("completes", async () => {
