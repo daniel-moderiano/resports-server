@@ -26,10 +26,6 @@ export const getBrokenDatabase = () => {
 };
 
 export const getDevelopmentDatabase = () => {
-  if (process.env.NODE_ENV !== "development") {
-    return;
-  }
-
   // An AWS RDS Postgres instance for development purposes only. Do not use in production.
   const developmentPool = new Pool({
     user: process.env.DEV_DB_USER,
@@ -43,10 +39,6 @@ export const getDevelopmentDatabase = () => {
 };
 
 export const getProductionDatabase = () => {
-  if (process.env.NODE_ENV !== "production") {
-    return;
-  }
-
   // AWS RDS Postgres instance for production. Do not use this in testing or development.
   // ? I expect this to be replaced with a more direct Lambda AWS SDK call later
   const productionPool = new Pool({
