@@ -38,29 +38,20 @@ export const getDevelopmentDatabase = () => {
   return developmentPool;
 };
 
-// Used in development/production.
-// This uses a chosen DB with the parameters below. In this case, while running locally, the 'resports' db will be used under a sysadmin superuser
-const pool = new Pool({
-  user: process.env.DB_USER,
-  host: process.env.DB_HOST,
-  database: process.env.DB_NAME,
-  password: process.env.DB_PASSWORD,
-  port: process.env.DB_PORT,
-});
-
-// Use this function to get access to the pool for queries. This is crafted as a function to ensure the correct pool is returned based on the TEST_ENV at the time of calling this function
-const getDb = () => {
-  // return awsPool;
-  if (process.env.TEST_ENV === "true") {
-    // Provide access to 'error' database to test error handling in db utility functions
-    if (process.env.TEST_ERROR === "true") {
-      return errorPool;
-    } else {
-      return testPool;
-    }
-  } else {
-    return pool;
+export const getProductionDatabase = () => {
+  if (process.env.NODE_ENV !== "production") {
+    return;
   }
-};
 
-export default getDb;
+  // AWS RDS Postgres instance for production. Do not use this in testing or development.
+  // ? I expect this to be replaced with a more direct Lambda AWS SDK call later
+  const productionPool = new Pool({
+    user: process.env.PROD_DB_USER,
+    host: process.env.PROD_DB_HOST,
+    password: process.env.PROD_DB_PASSWORD,
+    port: process.env.PROD_DB_PORT,
+    database: "postgres",
+  });
+
+  return productionPool;
+};
