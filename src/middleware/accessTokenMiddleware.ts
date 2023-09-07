@@ -1,6 +1,5 @@
 import asyncHandler from "express-async-handler";
 import fetch from "cross-fetch";
-import { APIToken, APITokenError } from "../types/APITypes";
 
 // Use this middleware on any route that is making requests to the Auth0 management API. It will request a new JWT before attempting to call the API, so you can be sure you're always making requests with a valid JWT (otherwise tokens will expire in 24 hours)
 export const getAccessToken = asyncHandler(async (req, res, next) => {
@@ -22,13 +21,13 @@ export const getAccessToken = asyncHandler(async (req, res, next) => {
 
   if (response.status !== 200) {
     // error with request
-    const error: APITokenError = await response.json();
+    const error = await response.json();
     res.status(response.status);
     throw new Error(error.error_description);
   }
 
   // Successful request. Extract token from response payload and attach to res.locals for easy access
-  const data: APIToken = await response.json();
+  const data = await response.json();
   res.locals.apiToken = data.access_token;
 
   next();
