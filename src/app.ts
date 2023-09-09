@@ -8,8 +8,8 @@ const app: Application = express();
 // Allow parsing of form data in req.body for POST and other requests
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-
 // Use routes
+app.get("/", (req, res) => res.send("Reached API"));
 app.use("/api/users", userRoutes);
 
 // Use error handler AFTER all routes are defined above

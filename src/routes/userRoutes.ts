@@ -1,5 +1,12 @@
+import {
+  getSavedChannelsController,
+  addSavedChannelController,
+  deleteSavedChannelController,
+  addUserController,
+  deleteUserController,
+} from "@/controllers/userControllers";
+import { checkJwt } from "@/middleware/checkJwtMiddleware";
 import express from "express";
-// import { requiresAuth } from "express-openid-connect";
 
 const router = express.Router();
 
@@ -8,14 +15,17 @@ const router = express.Router();
 // TODO: Create controllers for these routes
 // User should send requests with appropriate access token, enabling us to access routes
 // For user delete, we will likely need to get a management API access token. Use deleteAuth0User function from `resports-aws-cdk` for this if needed
-router.route("/");
-// .post(requiresAuth(), getAccessToken, addUser)
-// .delete(requiresAuth(), getAccessToken, deleteUser)
+router
+  .route("/")
+  .get(checkJwt, addUserController)
+  .delete(checkJwt, deleteUserController);
 
-router.route("/saved-channels");
-// .get(requiresAuth(), getUserSavedChannels)
-// .post(requiresAuth(), addSavedChannel);
-router.route("/saved-channels/:channelId");
-// .delete(requiresAuth(), deleteSavedChannel);
+router
+  .route("/saved-channels")
+  .get(checkJwt, getSavedChannelsController)
+  .post(checkJwt, addSavedChannelController);
+router
+  .route("/saved-channels/:channelId")
+  .delete(checkJwt, deleteSavedChannelController);
 
 export default router;
