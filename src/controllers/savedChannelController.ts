@@ -21,7 +21,6 @@ const SavedChannelRequestStruct = object({
 export const getSavedChannelsController = asyncHandler(
   async (req: Request, res) => {
     const userId = getUserIdFromRequest(req);
-    console.log(userId);
 
     const savedChannels = await getSavedChannels(userId);
 
