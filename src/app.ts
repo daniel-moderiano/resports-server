@@ -2,8 +2,15 @@ import "dotenv/config";
 import express, { Application } from "express";
 import userRoutes from "./routes/userRoutes";
 import { errorHandler } from "./middleware/errorMiddleware";
+import cors from "cors";
 
 const app: Application = express();
+
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+  })
+);
 
 // Allow parsing of form data in req.body for POST and other requests
 app.use(express.json());
