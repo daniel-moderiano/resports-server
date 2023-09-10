@@ -91,7 +91,7 @@ export const deleteUserController = asyncHandler(async (req: Request, res) => {
     await deleteAuth0User(userId);
 
     await session.commitTransaction();
-    res.status(204).send(createSuccessHttpResponse(204, null));
+    res.status(200).send(createSuccessHttpResponse(200, null));
   } catch (error) {
     console.error(error);
     await session.abortTransaction();

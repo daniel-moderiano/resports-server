@@ -87,7 +87,6 @@ export const deleteSavedChannelController = asyncHandler(
     }
 
     await deleteSavedChannel(userId, channelId);
-
-    res.status(204).send(createSuccessHttpResponse(204, null));
+    res.status(200).send(createSuccessHttpResponse(200, null));
   }
 );
