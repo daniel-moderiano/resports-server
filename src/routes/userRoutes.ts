@@ -17,7 +17,7 @@ const router = express.Router();
 
 router
   .route("/")
-  .get(checkJwt, addUserController)
+  .post(checkJwt, addUserController)
   .delete(checkJwt, deleteUserController);
 
 router
