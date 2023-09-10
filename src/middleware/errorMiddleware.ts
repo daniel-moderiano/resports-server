@@ -1,12 +1,7 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response } from "express";
 
 // Replace the inbuilt express error handler by defining a middleware func that accepts the err object in addition to the usual middleware params
-export const errorHandler = (
-  err: Error,
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const errorHandler = (err: Error, req: Request, res: Response) => {
   // Check for existing error status codes. If none exist, set to 500.
   let statusCode: number;
   if (!res.statusCode) {
