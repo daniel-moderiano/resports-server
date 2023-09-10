@@ -9,8 +9,8 @@ import {
   deleteSavedChannelController,
   deleteUserController,
   getSavedChannelsController,
-} from "@/controllers";
-import { checkJwt } from "@/middleware/checkJwtMiddleware";
+} from "../controllers";
+import { checkJwt } from "../middleware/checkJwtMiddleware";
 import express from "express";
 
 const router = express.Router();

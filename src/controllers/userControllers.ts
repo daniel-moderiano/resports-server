@@ -1,16 +1,16 @@
-import { deleteUser, upsertUser } from "@/db";
-import { Auth0AccessTokenResponse, UserStruct } from "@/types";
+import { deleteUser, upsertUser } from "../db";
+import { Auth0AccessTokenResponse, UserStruct } from "../types";
 import {
   createSuccessHttpResponse,
   createErrorHttpResponse,
-} from "@/utils/apiResponseGenerator";
+} from "../utils/apiResponseGenerator";
 import axios, { AxiosResponse } from "axios";
 import asyncHandler from "express-async-handler";
 import { Request } from "express-jwt";
 import mongoose from "mongoose";
 import { is, omit } from "superstruct";
 import "dotenv/config";
-import { getUserIdFromRequest } from "@/utils/getUserIdFromRequest";
+import { getUserIdFromRequest } from "../utils/getUserIdFromRequest";
 
 /**
  * Adds a new user to the database. The user data should be contained in the request body.

@@ -1,5 +1,5 @@
-import { UserModel } from "@/models";
-import { Channel, User } from "@/types";
+import { UserModel } from "../models";
+import { Channel, User } from "../types";
 import mongoose, { QueryOptions } from "mongoose";
 
 /**

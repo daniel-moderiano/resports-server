@@ -1,4 +1,4 @@
-import { Channel, User } from "@/types";
+import { Channel, User } from "../types";
 
 export const createSuccessHttpResponse = (
   statusCode: number,

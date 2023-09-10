@@ -1,10 +1,10 @@
-import { getSavedChannels, addSavedChannel, deleteSavedChannel } from "@/db";
-import { ChannelStruct } from "@/types";
+import { getSavedChannels, addSavedChannel, deleteSavedChannel } from "../db";
+import { ChannelStruct } from "../types";
 import {
   createSuccessHttpResponse,
   createErrorHttpResponse,
-} from "@/utils/apiResponseGenerator";
-import { getUserIdFromRequest } from "@/utils/getUserIdFromRequest";
+} from "../utils/apiResponseGenerator";
+import { getUserIdFromRequest } from "../utils/getUserIdFromRequest";
 import { object, is } from "superstruct";
 import asyncHandler from "express-async-handler";
 import { Request } from "express-jwt";

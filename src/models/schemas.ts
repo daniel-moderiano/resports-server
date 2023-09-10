@@ -1,4 +1,4 @@
-import { UserDocument } from "@/types";
+import { UserDocument } from "../types";
 import mongoose, { Schema } from "mongoose";
 
 const SavedChannelSchema = new Schema(
