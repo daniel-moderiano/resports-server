@@ -1,11 +1,5 @@
-import {
-  addSavedChannel,
-  deleteSavedChannel,
-  deleteUser,
-  getSavedChannels,
-  upsertUser,
-} from "@/db";
-import { Auth0AccessTokenResponse, ChannelStruct, UserStruct } from "@/types";
+import { deleteUser, upsertUser } from "@/db";
+import { Auth0AccessTokenResponse, UserStruct } from "@/types";
 import {
   createSuccessHttpResponse,
   createErrorHttpResponse,
@@ -14,30 +8,15 @@ import axios, { AxiosResponse } from "axios";
 import asyncHandler from "express-async-handler";
 import { Request } from "express-jwt";
 import mongoose from "mongoose";
-import { is, object, omit } from "superstruct";
+import { is, omit } from "superstruct";
 import "dotenv/config";
-
-const SavedChannelRequestStruct = object({
-  channel: ChannelStruct,
-});
+import { getUserIdFromRequest } from "@/utils/getUserIdFromRequest";
 
 /**
- * Retrieves the user ID from the authentication object of the request.
- *
- * @param request - The Express request object modified by `express-jwt`.
- * @returns - The user ID extracted from the authentication object.
- * @throws - If the user ID cannot be accessed.
+ * Adds a new user to the database. The user data should be contained in the request body.
+ * @param req - `express-jwt` request object containing the user data in the body.
+ * @param res - Express response object used to send the response.
  */
-const getUserId = (request: Request) => {
-  const userId = request.auth?.sub;
-
-  if (!userId) {
-    throw new Error("Unable to access user ID");
-  }
-
-  return userId;
-};
-
 export const addUserController = asyncHandler(async (req: Request, res) => {
   const userInformation = req.body;
 
@@ -58,6 +37,11 @@ export const addUserController = asyncHandler(async (req: Request, res) => {
   }
 });
 
+/**
+ * Deletes a user in Auth0 using the Auth0 Management API.
+ * @param userId - The ID of the user to delete.
+ * @returns - Axios Response object containing the result of the API call.
+ */
 const deleteAuth0User = async (userId: string) => {
   // Get Management API Access Token
   const accessTokenResponse: AxiosResponse<Auth0AccessTokenResponse> =
@@ -85,8 +69,13 @@ const deleteAuth0User = async (userId: string) => {
   });
 };
 
+/**
+ * Deletes a user by ID both in your MongoDB database and in Auth0.
+ * @param req - `express-jwt` request object with the user ID retrieved from the request data.
+ * @param res - Express response object used to send the response.
+ */
 export const deleteUserController = asyncHandler(async (req: Request, res) => {
-  const userId = getUserId(req);
+  const userId = getUserIdFromRequest(req);
 
   const session = await mongoose.startSession();
 
@@ -111,68 +100,3 @@ export const deleteUserController = asyncHandler(async (req: Request, res) => {
     session.endSession();
   }
 });
-
-export const getSavedChannelsController = asyncHandler(
-  async (req: Request, res) => {
-    const userId = getUserId(req);
-    console.log(userId);
-
-    const savedChannels = await getSavedChannels(userId);
-
-    if (savedChannels) {
-      res.status(200).send(createSuccessHttpResponse(200, savedChannels));
-    } else {
-      res
-        .status(500)
-        .send(
-          createErrorHttpResponse(500, "Failed to retrieve saved channels.")
-        );
-    }
-  }
-);
-
-export const addSavedChannelController = asyncHandler(
-  async (req: Request, res) => {
-    const userId = getUserId(req);
-
-    if (!req.body) {
-      res
-        .status(400)
-        .send(createErrorHttpResponse(400, "Channel data is missing."));
-    }
-
-    if (!is(req.body, SavedChannelRequestStruct)) {
-      res
-        .status(400)
-        .send(createErrorHttpResponse(400, "Invalid channel data."));
-    }
-
-    const updatedUser = await addSavedChannel(userId, req.body.channel);
-
-    if (updatedUser) {
-      res.status(201).send(createSuccessHttpResponse(201, updatedUser));
-    } else {
-      res
-        .status(500)
-        .send(createErrorHttpResponse(500, "Failed to save channel"));
-    }
-  }
-);
-
-export const deleteSavedChannelController = asyncHandler(
-  async (req: Request, res) => {
-    const userId = getUserId(req);
-    const { channelId } = req.params;
-
-    if (!channelId) {
-      res
-        .status(400)
-        .send(createErrorHttpResponse(400, "Channel ID is missing."));
-      return;
-    }
-
-    await deleteSavedChannel(userId, channelId);
-
-    res.status(204).send(createSuccessHttpResponse(204, null));
-  }
-);
